@@ -3,3 +3,7 @@ langchain
 langchain-google-genai
 python-dotenv
 langsmith
+fastapi
+uvicorn[standard]
+pydantic
+requests
