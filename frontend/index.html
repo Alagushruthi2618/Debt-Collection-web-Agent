@@ -2,11 +2,50 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Debt Agent</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Debt Collection Agent</title>
+    <meta name="description" content="AI-Powered Debt Collection Management System" />
+    <meta name="author" content="Debt Collection Agent" />
+
+    <meta property="og:title" content="Debt Collection Agent" />
+    <meta property="og:description" content="AI-Powered Debt Collection Management System" />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@debtcollection" />
+
+    <!-- ✅ Razorpay Checkout Script (Remove if payment not needed) -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
+    <!-- Langchain Backend Configuration -->
+    <script>
+      // Configure your Langchain backend URL
+      window.API_BASE_URL = window.API_BASE_URL || 'http://localhost:8000';
+      window.ENABLE_DEBUG = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      
+      // API Endpoints Configuration
+      window.API_ENDPOINTS = {
+        USER_LOAD: '/api/user/load',
+        CHAT_MESSAGE: '/api/chat/message',
+        PAYMENT_PROCESS: '/api/payment/process'
+      };
+      
+      // Helper function to build API URLs
+      window.getApiUrl = function(endpoint) {
+        return window.API_BASE_URL + endpoint;
+      };
+    </script>
+    <!-- Vite will inject the script tag here in dev mode -->
+    <!-- Production build scripts are injected during build -->
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
+    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
   </body>
 </html>

@@ -32,6 +32,10 @@ def should_continue(state: CallState) -> str:
         return "greeting"
     
     elif stage == "greeting":
+        # If call is complete (user denied being the person), end
+        if state.get("is_complete"):
+            return END
+        # Otherwise proceed to verification
         return "verification"
     
     elif stage == "verification":

@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 function NegotiationOptions({ plans, onSelect }) {
   if (!plans?.length) return null;
 
@@ -25,3 +23,4 @@ function NegotiationOptions({ plans, onSelect }) {
 }
 
 export default NegotiationOptions;
+

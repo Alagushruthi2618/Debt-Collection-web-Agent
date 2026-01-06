@@ -4,6 +4,13 @@
 FastAPI application entry point for web-based debt collection agent.
 """
 
+import sys
+from pathlib import Path
+
+# Add project root to Python path to allow imports
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from backend.routes import chat

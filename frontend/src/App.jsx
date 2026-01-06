@@ -42,22 +42,64 @@ function App() {
   // If session not started, show phone input
   if (!started) {
     return (
-      <div className="app">
-        <h2>Enter your phone number to start chat</h2>
-        <input
-          type="tel"
-          placeholder="Enter phone number"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          style={{ padding: "8px", fontSize: "16px" }}
-        />
-        <button
-          onClick={initChat}
-          disabled={loading || !phone}
-          style={{ padding: "8px 16px", marginLeft: "10px", fontSize: "16px" }}
-        >
-          {loading ? "Starting..." : "Start Chat"}
-        </button>
+      <div className="app" style={{ 
+        display: "flex", 
+        flexDirection: "column", 
+        justifyContent: "center", 
+        alignItems: "center",
+        padding: "40px 20px",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+      }}>
+        <div style={{
+          background: "white",
+          padding: "40px",
+          borderRadius: "20px",
+          boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
+          maxWidth: "500px",
+          width: "100%"
+        }}>
+          <h2>Enter your phone number to start chat</h2>
+          <input
+            type="tel"
+            placeholder="Enter phone number (e.g., +919876543210)"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && phone && !loading) {
+                initChat();
+              }
+            }}
+            style={{ 
+              width: "100%",
+              padding: "14px 20px", 
+              fontSize: "16px",
+              marginTop: "24px",
+              border: "2px solid #e5e7eb",
+              borderRadius: "12px",
+              outline: "none",
+              transition: "all 0.2s ease"
+            }}
+          />
+          <button
+            onClick={initChat}
+            disabled={loading || !phone}
+            style={{ 
+              width: "100%",
+              padding: "14px 32px", 
+              marginTop: "16px", 
+              fontSize: "16px",
+              fontWeight: "600",
+              background: loading || !phone ? "#d1d5db" : "#8b5cf6",
+              color: "white",
+              border: "none",
+              borderRadius: "12px",
+              cursor: loading || !phone ? "not-allowed" : "pointer",
+              transition: "all 0.2s ease"
+            }}
+          >
+            {loading ? "Starting..." : "Start Chat"}
+          </button>
+        </div>
       </div>
     );
   }
