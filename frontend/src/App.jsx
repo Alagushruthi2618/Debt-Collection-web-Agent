@@ -315,10 +315,6 @@ function App() {
     handleSend("I'd like to see payment options");
   }
 
-  function handleStartAgain() {
-    handleReset();
-  }
-
   function handleRateConversation() {
     setShowFeedbackModal(true);
   }
@@ -433,7 +429,6 @@ function App() {
 
           {callState?.is_complete && (
             <ConversationCompletion
-              onStartAgain={handleStartAgain}
               onRateConversation={handleRateConversation}
             />
           )}

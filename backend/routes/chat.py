@@ -56,6 +56,34 @@ class ChatResponse(BaseModel):
     loan_id: Optional[str] = None
 
 
+def sanitize_user_input(user_input: str) -> str:
+    """
+    Sanitize user input to prevent injection attacks and ensure safe processing.
+    """
+    if not user_input:
+        return ""
+    
+    # Strip whitespace
+    sanitized = user_input.strip()
+    
+    # Guardrail: Check maximum length (prevent DoS)
+    MAX_INPUT_LENGTH = 5000
+    if len(sanitized) > MAX_INPUT_LENGTH:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Message is too long. Maximum length is {MAX_INPUT_LENGTH} characters."
+        )
+    
+    # Guardrail: Check minimum length (prevent empty/spam)
+    if len(sanitized) == 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Message cannot be empty. Please enter a message."
+        )
+    
+    return sanitized
+
+
 @router.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     """
@@ -69,41 +97,70 @@ async def chat(request: ChatRequest):
     5. Return response
     """
     
-    session_id = request.session_id
-    user_input = request.user_input.strip() if request.user_input else ""
-    
-    # Validate input
-    if not user_input:
+    # Guardrail: Validate request object
+    if not request:
         raise HTTPException(
-            status_code=400, 
-            detail="Message cannot be empty. Please enter a message."
+            status_code=400,
+            detail="Invalid request. Request body is required."
         )
     
-    # Validate session_id
-    if not session_id:
+    session_id = request.session_id
+    
+    # Guardrail: Validate session_id
+    if not session_id or not isinstance(session_id, str):
         raise HTTPException(
             status_code=400,
             detail="Session ID is required. Please start a new chat."
         )
     
+    # Guardrail: Validate session_id format (UUID-like)
+    if len(session_id) < 10 or len(session_id) > 100:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid session ID format. Please start a new chat."
+        )
+    
+    # Sanitize user input
+    user_input = sanitize_user_input(request.user_input if request.user_input else "")
+    
     # Get session state
     state = get_session(session_id)
     
-    # If session doesn't exist, this is an error (frontend should create session first)
+    # Guardrail: Session existence check
     if not state:
         raise HTTPException(
             status_code=404, 
             detail="Session not found. Your session may have expired. Please start a new chat."
         )
     
-    # Check if call is already complete
+    # Guardrail: Validate state structure
+    if not isinstance(state, dict):
+        raise HTTPException(
+            status_code=500,
+            detail="Invalid session state. Please start a new chat."
+        )
+    
+    # Guardrail: Check if call is already complete
     if state.get("is_complete"):
         raise HTTPException(
             status_code=400,
             detail="This conversation has already ended. Please start a new chat to continue."
         )
     
-    # Check if agent is awaiting user input
+    # Guardrail: Validate required state fields
+    if "messages" not in state:
+        raise HTTPException(
+            status_code=500,
+            detail="Invalid session state: missing messages. Please start a new chat."
+        )
+    
+    if "stage" not in state:
+        raise HTTPException(
+            status_code=500,
+            detail="Invalid session state: missing stage. Please start a new chat."
+        )
+    
+    # Guardrail: Check if agent is awaiting user input
     if not state.get("awaiting_user"):
         # This might happen if frontend sends input when agent isn't ready
         # We'll allow it but log a warning for debugging
@@ -214,26 +271,66 @@ class FeedbackRequest(BaseModel):
     feedback: Optional[str] = None
 
 
-@router.post("/init")
-async def init_session(request: InitRequest):
+def validate_phone_number(phone: str) -> str:
     """
-    Initialize a new session for a phone number.
-    Returns session_id and initial state.
+    Validate and sanitize phone number.
+    Returns sanitized phone number or raises HTTPException.
     """
-    phone = request.phone.strip() if request.phone else ""
-    
     if not phone:
         raise HTTPException(
             status_code=400, 
             detail="Phone number is required. Please enter a valid phone number."
         )
     
-    # Basic phone number validation
+    # Sanitize: remove whitespace and common separators
+    phone = phone.strip().replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+    
+    # Guardrail: Check minimum length
     if len(phone) < 10:
         raise HTTPException(
             status_code=400,
             detail="Please enter a valid phone number (at least 10 digits)."
         )
+    
+    # Guardrail: Check maximum length (reasonable limit)
+    if len(phone) > 20:
+        raise HTTPException(
+            status_code=400,
+            detail="Phone number is too long. Please enter a valid phone number."
+        )
+    
+    # Guardrail: Check for valid characters (digits and + only)
+    if not phone.replace("+", "").replace(" ", "").isdigit():
+        raise HTTPException(
+            status_code=400,
+            detail="Phone number contains invalid characters. Please use only digits and +."
+        )
+    
+    # Guardrail: Ensure + is only at the start if present
+    if "+" in phone and not phone.startswith("+"):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid phone number format. The + sign must be at the beginning."
+        )
+    
+    return phone
+
+
+@router.post("/init")
+async def init_session(request: InitRequest):
+    """
+    Initialize a new session for a phone number.
+    Returns session_id and initial state.
+    """
+    # Guardrail: Validate request object
+    if not request or not hasattr(request, 'phone'):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid request. Phone number is required."
+        )
+    
+    # Validate and sanitize phone number
+    phone = validate_phone_number(request.phone)
     
     session_id, state = create_session(phone)
     

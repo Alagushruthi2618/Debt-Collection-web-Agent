@@ -1,4 +1,4 @@
-function ConversationCompletion({ onStartAgain, onRateConversation }) {
+function ConversationCompletion({ onRateConversation }) {
   return (
     <div className="px-4 py-4 bg-gray-50 border-t border-gray-200">
       <div className="text-center mb-4">
@@ -11,16 +11,10 @@ function ConversationCompletion({ onStartAgain, onRateConversation }) {
         <p className="text-xs text-gray-500">Thank you for using our service</p>
       </div>
       
-      <div className="flex gap-2">
-        <button
-          onClick={onStartAgain}
-          className="btn btn-secondary flex-1"
-        >
-          Start again
-        </button>
+      <div className="flex justify-center">
         <button
           onClick={onRateConversation}
-          className="btn btn-primary flex-1"
+          className="btn btn-primary"
         >
           Rate conversation
         </button>

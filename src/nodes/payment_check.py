@@ -12,6 +12,14 @@ def payment_check_node(state: CallState) -> dict:
     and routes them to the appropriate next step.
     """
 
+    # Guardrail: Validate state structure
+    if not isinstance(state, dict):
+        raise ValueError("Invalid state: state must be a dictionary")
+    
+    # Guardrail: Validate verification status
+    if not state.get("is_verified"):
+        raise ValueError("Invalid state: User must be verified before payment check")
+    
     user_input = state.get("last_user_input")
 
     # If no input yet, wait for user response

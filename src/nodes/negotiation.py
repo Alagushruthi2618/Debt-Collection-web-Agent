@@ -297,8 +297,35 @@ def negotiation_node(state: CallState) -> dict:
     Detects when customer commits to amount AND date, then moves to closing.
     """
 
+    # Guardrail: Validate state structure
+    if not isinstance(state, dict):
+        raise ValueError("Invalid state: state must be a dictionary")
+    
+    # Guardrail: Validate verification status
+    if not state.get("is_verified"):
+        raise ValueError("Invalid state: User must be verified before negotiation")
+    
+    # Guardrail: Validate required fields
+    if "outstanding_amount" not in state:
+        raise ValueError("Invalid state: outstanding_amount is required")
+    
+    if "customer_name" not in state or not state.get("customer_name"):
+        raise ValueError("Invalid state: customer_name is required")
+    
+    if "customer_id" not in state:
+        raise ValueError("Invalid state: customer_id is required")
+    
+    # Guardrail: Validate outstanding amount
     amount = state["outstanding_amount"]
-    customer_name = state["customer_name"].split()[0]
+    if not isinstance(amount, (int, float)) or amount < 0:
+        raise ValueError("Invalid state: outstanding_amount must be a non-negative number")
+    
+    # Guardrail: Sanitize customer name
+    customer_name = str(state["customer_name"]).strip()
+    if not customer_name:
+        raise ValueError("Invalid state: customer_name cannot be empty")
+    
+    customer_name = customer_name.split()[0]
     
     last_user_input = state.get("last_user_input") or ""
     messages = state.get("messages", [])
@@ -322,6 +349,13 @@ def negotiation_node(state: CallState) -> dict:
     # If we have both - CLOSE IMMEDIATELY
     if has_both:
         print(f"[NEGOTIATION] ✅ Full commitment received - CLOSING NOW")
+        
+        # Guardrail: Validate commitment data before saving
+        if not committed_amount or committed_amount <= 0:
+            raise ValueError("Invalid commitment: amount must be positive")
+        
+        if not committed_date:
+            raise ValueError("Invalid commitment: date is required")
         
         # Save PTP record
         plan_name = selected_plan['name'] if selected_plan else "Custom Payment Plan"

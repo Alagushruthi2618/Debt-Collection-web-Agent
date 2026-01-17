@@ -5,10 +5,19 @@ from ..state import CallState
 
 def verification_node(state: CallState) -> dict:
     """
-    Verify customer identity using DOB.
-    Allows max 3 attempts.
+    Verify customer identity using phone number.
+    Phone number verification already happened during session initialization,
+    so we automatically mark the user as verified.
     """
 
+    # Guardrail: Validate state structure
+    if not isinstance(state, dict):
+        raise ValueError("Invalid state: state must be a dictionary")
+    
+    # Guardrail: Ensure required fields exist
+    if "customer_phone" not in state:
+        raise ValueError("Invalid state: customer_phone is required")
+    
     # Skip if already verified
     if state.get("is_verified"):
         return {
@@ -16,81 +25,18 @@ def verification_node(state: CallState) -> dict:
             "awaiting_user": False,
         }
 
-    attempts = state.get("verification_attempts", 0)
-    user_input = state.get("last_user_input")
-    expected_dob = state["customer_dob"].lower()
-
-    # First time - ask for DOB
-    if attempts == 0:
-        return {
-            "verification_attempts": 1,
-            "messages": state["messages"] + [{
-                "role": "assistant",
-                "content": "For security purposes, could you please confirm your date of birth?"
-            }],
-            "stage": "verification",
-            "awaiting_user": True,
-            "last_user_input": None,
-        }
-
-    # If no user input yet, wait
-    if not user_input or user_input.strip() == "":
-        return {
-            "stage": "verification",
-            "awaiting_user": True,
-        }
-
-    user_input = user_input.lower().strip()
-
-    # Check if DOB matches (support multiple formats)
-    dob_variations = [
-        expected_dob,
-        expected_dob.replace("-", "/"),
-        expected_dob.replace("-", " "),
-    ]
+    # Guardrail: Validate phone number exists and is not empty
+    phone = state.get("customer_phone", "").strip()
+    if not phone:
+        raise ValueError("Invalid state: customer_phone cannot be empty")
     
-    if any(dob in user_input for dob in dob_variations):
-        return {
-            "is_verified": True,
-            "messages": state["messages"] + [{
-                "role": "assistant",
-                "content": "Thank you for confirming your details."
-            }],
-            "stage": "verified",
-            "awaiting_user": False,
-            "last_user_input": None,
-        }
-
-    # Incorrect DOB
-    new_attempts = attempts + 1
-
-    # Max attempts reached (>= 4 means 3 failed attempts)
-    if new_attempts >= 4:
-        return {
-            "verification_attempts": new_attempts,
-            "is_verified": False,
-            "call_outcome": "verification_failed",
-            "messages": state["messages"] + [{
-                "role": "assistant",
-                "content": (
-                    "I'm sorry, I'm unable to verify your identity. "
-                    "Please contact our support team for further assistance. Goodbye."
-                )
-            }],
-            "is_complete": True,
-            "stage": "closing",
-            "awaiting_user": False,
-            "last_user_input": None,
-        }
-
-    # Allow retry
+    # Phone number verification already happened at session initialization
+    # If we reach here, the phone number was validated and customer exists
+    # So we can automatically verify the user (silently, no message)
     return {
-        "verification_attempts": new_attempts,
-        "messages": state["messages"] + [{
-            "role": "assistant",
-            "content": "That doesn't match our records. Please confirm your date of birth again."
-        }],
-        "stage": "verification",
-        "awaiting_user": True,
+        "is_verified": True,
+        "verification_attempts": 1,  # Track that verification occurred
+        "stage": "verified",
+        "awaiting_user": False,
         "last_user_input": None,
     }
