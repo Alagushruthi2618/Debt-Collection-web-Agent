@@ -32,7 +32,7 @@ function StaticHeader({ customerName, outstandingAmount, daysPastDue, loanId, on
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M3 3h18v18H3V3zm16 16V5H5v14h14zm-8-2h2v-6h-2v6zm0-8h2V7h-2v2z" fill="currentColor"/>
                 </svg>
-                Abhi Pay Karein
+                Pay Now
               </button>
             )}
             <button

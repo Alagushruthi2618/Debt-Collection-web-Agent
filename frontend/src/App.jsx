@@ -42,7 +42,7 @@ function App() {
 
   async function initChat() {
     if (!phone.trim()) {
-      setError("Kripya ek valid phone number enter karein");
+      setError("Please enter a valid phone number");
       return;
     }
     
@@ -79,11 +79,11 @@ function App() {
     } catch (err) {
       console.error("Init error:", err);
       setIsTyping(false);
-      const errorMessage = err.message || "Chat shuru karne mein asafal. Kripya check karein ki phone number valid hai.";
+      const errorMessage = err.message || "Failed to start chat. Please check that the phone number is valid.";
       setError(errorMessage);
       // Show specific error for customer not found
       if (errorMessage.includes("not found") || errorMessage.includes("404")) {
-        setError("Customer nahi mila. Kripya ek valid test phone number use karein (jaise, +919876543210)");
+        setError("Customer not found. Please use a valid test phone number (e.g., +919876543210)");
       }
     } finally {
       setLoading(false);
@@ -184,12 +184,12 @@ function App() {
     } catch (err) {
       console.error("Send error:", err);
       setIsTyping(false);
-      const errorMessage = err.message || "Message send karne mein asafal. Kripya phir se try karein.";
+      const errorMessage = err.message || "Failed to send message. Please try again.";
       setError(errorMessage);
       
       // If session expired or not found, allow restart
       if (errorMessage.includes("not found") || errorMessage.includes("404")) {
-        setError("Session expire ho gaya. Kripya nayi chat shuru karein.");
+        setError("Session expired. Please start a new chat.");
         setTimeout(() => {
           handleReset();
         }, 2000);
@@ -293,7 +293,7 @@ function App() {
       // No need to send another message since backend already added it
     } catch (err) {
       console.error("Screenshot upload error:", err);
-      setError("Screenshot upload karne mein asafal. Kripya phir se try karein.");
+      setError("Failed to upload screenshot. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -345,10 +345,10 @@ function App() {
 </div>
 
             <h1 className="text-2xl font-semibold text-gray-900">
-              Predixion Finance mein Aapka Swagat Hai
+              Welcome to Predixion Finance
             </h1>
             <p className="text-gray-600">
-              Apna phone number enter karke debt collection assistant ke saath shuru karein
+              Enter your phone number to start with the debt collection assistant
             </p>
           </div>
 
@@ -376,7 +376,7 @@ function App() {
                 disabled={loading}
                 className="input appearance-none bg-white pr-10"
               >
-                <option value="">Phone number select karein</option>
+                <option value="">Select phone number</option>
                 <option value="+917219559972">+91 72195 59972</option>
                 <option value="+919876543210">+91 98765 43210</option>
                 <option value="+919876543211">+91 98765 43211</option>
@@ -389,7 +389,7 @@ function App() {
               </div>
             </div>
             <p className="text-xs text-gray-500">
-              Demo ke liye test numbers available hain
+              Test numbers are available for demo
             </p>
           </div>
 
@@ -398,7 +398,7 @@ function App() {
             disabled={loading || !phone.trim()}
             className="btn btn-primary btn-lg w-full"
           >
-            {loading ? "Shuru ho raha hai..." : "Chat Shuru Karein"}
+            {loading ? "Starting..." : "Start Chat"}
           </button>
         </div>
       ) : (
