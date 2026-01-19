@@ -246,8 +246,8 @@ async def chat(request: ChatRequest):
         error_detail = "An error occurred while processing your message. Please try again."
         error_str = str(e).lower()
         
-        if "gemini_api_key" in error_str or "api_key" in error_str:
-            error_detail = "Server configuration error: GEMINI_API_KEY is not set. Please configure the API key in the .env file."
+        if "azure_openai_api_key" in error_str or "api_key" in error_str:
+            error_detail = "Server configuration error: AZURE_OPENAI_API_KEY is not set. Please configure the API key in the .env file."
         elif "timeout" in error_str:
             error_detail = "Request timed out. Please try again."
         elif "connection" in error_str:
@@ -394,8 +394,8 @@ async def init_session(request: InitRequest):
         error_detail = "An error occurred while starting the chat. Please try again."
         error_str = str(e).lower()
         
-        if "gemini_api_key" in error_str or "api_key" in error_str:
-            error_detail = "Server configuration error: GEMINI_API_KEY is not set. Please configure the API key in the .env file."
+        if "azure_openai_api_key" in error_str or "api_key" in error_str:
+            error_detail = "Server configuration error: AZURE_OPENAI_API_KEY is not set. Please configure the API key in the .env file."
         elif "timeout" in error_str:
             error_detail = "Request timed out. Please try again."
         elif "connection" in error_str:

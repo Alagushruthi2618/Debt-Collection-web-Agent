@@ -54,9 +54,12 @@ def should_continue(state: CallState) -> str:
     
     elif stage == "payment_check":
         payment_status = state.get("payment_status")
+        # If payment_status is None, we haven't processed the input yet - route back to payment_check
+        if payment_status is None:
+            return "payment_check"
         if payment_status == "willing":
             return "negotiation"
-        # For other statuses (paid, disputed, callback, unable), go to closing
+        # For other statuses (paid, disputed, callback, unable, unknown), go to closing
         return "closing"
     
     elif stage == "negotiation":

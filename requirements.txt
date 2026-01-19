@@ -1,10 +1,9 @@
 langgraph
 langchain
-langchain-google-genai
-google-generativeai
 python-dotenv
 langsmith
 fastapi
 uvicorn[standard]
 pydantic
 requests
+openai

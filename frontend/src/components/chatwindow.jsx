@@ -67,7 +67,7 @@ function ChatWindow({
 
               <div>
                 <div className="text-base font-semibold text-gray-900">Predixion Finance Assistant</div>
-                <div className="text-sm text-gray-500">Online</div>
+                <div className="text-sm text-gray-500">Online Hai</div>
               </div>
             </div>
             {onReset && (
@@ -75,7 +75,7 @@ function ChatWindow({
                 onClick={onReset}
                 className="btn btn-secondary btn-sm"
               >
-                Reset
+                Reset Karein
               </button>
             )}
           </div>
@@ -89,7 +89,7 @@ function ChatWindow({
       >
         {messages.length === 0 ? (
           <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
-            Start a conversation...
+            Conversation shuru karein...
           </div>
         ) : (
           <>
@@ -134,7 +134,7 @@ function ChatWindow({
 
         {isComplete && (
           <div className="px-4 py-3 bg-green-50 text-green-800 text-center font-medium border border-green-200 text-sm rounded-lg">
-            Conversation completed
+            Conversation complete ho gaya
           </div>
         )}
       </div>

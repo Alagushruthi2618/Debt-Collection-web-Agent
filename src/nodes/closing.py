@@ -10,7 +10,7 @@ def closing_node(state: CallState) -> dict:
     Handles different outcomes appropriately.
     """
 
-    # Get the final payment status (Gemini-classified)
+    # Get the final payment status (Azure OpenAI-classified)
     payment_status = state.get("payment_status", "completed")
     
     print(f"[CLOSING] Closing node called. payment_status={payment_status}, is_complete={state.get('is_complete')}, stage={state.get('stage')}")
@@ -30,10 +30,10 @@ def closing_node(state: CallState) -> dict:
         if not has_screenshot:
             # Ask for proof and wait for upload
             closing_message = (
-                "Thank you for confirming your payment. "
-                "To help us verify and process this quickly, please upload proof of payment as an attachment "
-                "(screenshot or image of the payment receipt/transaction). "
-                "You can use the attachment button (📎) below to upload your proof."
+                "Aapke payment confirm karne ke liye dhanyawad. "
+                "Jaldi verify aur process karne ke liye, kripya payment ka proof attachment ke roop mein upload karein "
+                "(payment receipt/transaction ka screenshot ya image). "
+                "Aap neeche attachment button (📎) use karke apna proof upload kar sakte hain."
             )
             outcome = "paid"
             print(f"[CLOSING] Returning early - asking for proof. is_complete=False, awaiting_user=True")
@@ -52,11 +52,11 @@ def closing_node(state: CallState) -> dict:
             # Screenshot uploaded, show final closing message
             print(f"[CLOSING] Screenshot found - showing final closing message")
             closing_message = (
-                "Thank you for providing the proof of payment. "
-                "We have received your attachment and will verify this on our end. "
-                "Your account will be updated accordingly once verification is complete. "
-                "If you have any questions, please feel free to contact us. "
-                "Have a good day."
+                "Payment proof dene ke liye dhanyawad. "
+                "Humne aapka attachment receive kar liya hai aur hum ise verify karenge. "
+                "Verification complete hone ke baad aapka account accordingly update ho jayega. "
+                "Agar aapke paas koi sawaal hain, toh kripya humse contact karein. "
+                "Aapka din achha rahe."
             )
             outcome = "paid"
         
@@ -76,10 +76,10 @@ def closing_node(state: CallState) -> dict:
         dispute_id = save_dispute(state["customer_id"], dispute_reason)
         
         closing_message = (
-            "I understand you're disputing this debt. "
-            f"I've created a dispute ticket (Reference: {dispute_id}). "
-            "Our disputes team will review this and contact you within 3-5 business days. "
-            "Thank you for bringing this to our attention."
+            "Main samajh gaya hoon ki aap is debt ko dispute kar rahe hain. "
+            f"Maine ek dispute ticket create kar diya hai (Reference: {dispute_id}). "
+            "Hamara disputes team ise review karega aur 3-5 business days mein aapse contact karega. "
+            "Is matter ko hamare attention mein lane ke liye dhanyawad."
         )
         outcome = "disputed"
         state["dispute_id"] = dispute_id
@@ -87,17 +87,17 @@ def closing_node(state: CallState) -> dict:
         
     elif payment_status == "callback":
         closing_message = (
-            "No problem, I understand you need more time. "
-            "We'll call you back as requested. "
-            "Thank you for your time today."
+            "Koi baat nahi, main samajh gaya hoon ki aapko aur time chahiye. "
+            "Hum aapko requested time par call back karenge. "
+            "Aaj aapka time dene ke liye dhanyawad."
         )
         outcome = "callback"
         
     elif payment_status == "unable":
         closing_message = (
-            "I understand your current financial situation. "
-            "Our team will review your case and contact you to discuss possible options. "
-            "Thank you for being honest with us today."
+            "Main aapki current financial situation samajh raha hoon. "
+            "Hamara team aapke case ko review karega aur possible options discuss karne ke liye aapse contact karega. "
+            "Aaj hamare saath honest rehne ke liye dhanyawad."
         )
         outcome = "unable"
         
@@ -111,28 +111,28 @@ def closing_node(state: CallState) -> dict:
             plan_name = state.get("selected_plan", {}).get("name", "Payment Plan") if state.get("selected_plan") else "Payment Plan"
             
             closing_message = (
-                f"Perfect! I've documented your commitment to the {plan_name} "
-                f"with payment of ₹{ptp_amount:,.0f} starting on {ptp_date}. "
-                f"Your PTP reference number is {ptp_id}. "
-                f"You'll receive a confirmation shortly. Thank you for working this out with us. Have a great day!"
+                f"Perfect! Maine aapka commitment document kar diya hai - {plan_name} "
+                f"ke saath ₹{ptp_amount:,.0f} ki payment {ptp_date} se shuru hogi. "
+                f"Aapka PTP reference number hai {ptp_id}. "
+                f"Aapko jaldi hi confirmation mil jayega. Is matter ko resolve karne ke liye dhanyawad. Aapka din achha rahe!"
             )
             outcome = "ptp_recorded"
         else:
             # Customer discussed payment but no specific commitment yet
             closing_message = (
-                "Thank you for discussing this with us today. "
-                "Based on our conversation, we'll follow up with you shortly to finalize the payment arrangement. "
-                "If you'd like to proceed with payment before then, please contact us. "
-                "Have a good day."
+                "Aaj hamare saath is matter par discuss karne ke liye dhanyawad. "
+                "Hamari conversation ke basis par, hum jaldi hi aapke saath follow-up karke payment arrangement finalize karenge. "
+                "Agar aap usse pehle payment proceed karna chahte hain, toh kripya humse contact karein. "
+                "Aapka din achha rahe."
             )
             outcome = "willing"
         
     else:
         # Fallback for any unexpected status
         closing_message = (
-            "Thank you for your time today. "
-            "If you have any questions, please feel free to contact us. "
-            "Have a good day."
+            "Aaj aapka time dene ke liye dhanyawad. "
+            "Agar aapke paas koi sawaal hain, toh kripya humse contact karein. "
+            "Aapka din achha rahe."
         )
         outcome = payment_status or "completed"
 

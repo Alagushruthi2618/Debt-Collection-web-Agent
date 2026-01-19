@@ -42,7 +42,7 @@ function App() {
 
   async function initChat() {
     if (!phone.trim()) {
-      setError("Please enter a valid phone number");
+      setError("Kripya ek valid phone number enter karein");
       return;
     }
     
@@ -79,11 +79,11 @@ function App() {
     } catch (err) {
       console.error("Init error:", err);
       setIsTyping(false);
-      const errorMessage = err.message || "Failed to start chat. Please check if the phone number is valid.";
+      const errorMessage = err.message || "Chat shuru karne mein asafal. Kripya check karein ki phone number valid hai.";
       setError(errorMessage);
       // Show specific error for customer not found
       if (errorMessage.includes("not found") || errorMessage.includes("404")) {
-        setError("Customer not found. Please use a valid test phone number (e.g., +919876543210)");
+        setError("Customer nahi mila. Kripya ek valid test phone number use karein (jaise, +919876543210)");
       }
     } finally {
       setLoading(false);
@@ -91,7 +91,7 @@ function App() {
   }
 
   function handlePayNow() {
-    handleSend("I'd like to see payment options");
+    handleSend("Mujhe payment options dikhayein");
   }
 
   async function handleSend(input) {
@@ -184,12 +184,12 @@ function App() {
     } catch (err) {
       console.error("Send error:", err);
       setIsTyping(false);
-      const errorMessage = err.message || "Failed to send message. Please try again.";
+      const errorMessage = err.message || "Message send karne mein asafal. Kripya phir se try karein.";
       setError(errorMessage);
       
       // If session expired or not found, allow restart
       if (errorMessage.includes("not found") || errorMessage.includes("404")) {
-        setError("Session expired. Please start a new chat.");
+        setError("Session expire ho gaya. Kripya nayi chat shuru karein.");
         setTimeout(() => {
           handleReset();
         }, 2000);
@@ -293,7 +293,7 @@ function App() {
       // No need to send another message since backend already added it
     } catch (err) {
       console.error("Screenshot upload error:", err);
-      setError("Failed to upload screenshot. Please try again.");
+      setError("Screenshot upload karne mein asafal. Kripya phir se try karein.");
     } finally {
       setLoading(false);
     }
@@ -301,18 +301,18 @@ function App() {
 
   function handleQuickReply(action) {
     if (action === "payment_options") {
-      handleSend("I'd like to see payment options");
+      handleSend("Mujhe payment options dikhayein");
     } else if (action === "account_details") {
-      handleSend("Can you provide my account details?");
+      handleSend("Kya aap mujhe account details de sakte hain?");
     } else if (action === "request_callback") {
-      handleSend("I would like to request a callback. What times are available?");
+      handleSend("Main callback request karna chahta hoon. Kaunse time available hain?");
     } else if (action === "need_help") {
-      handleSend("I need help");
+      handleSend("Mujhe help chahiye");
     }
   }
 
   function handlePaymentClick() {
-    handleSend("I'd like to see payment options");
+    handleSend("Mujhe payment options dikhayein");
   }
 
   function handleRateConversation() {
@@ -345,10 +345,10 @@ function App() {
 </div>
 
             <h1 className="text-2xl font-semibold text-gray-900">
-              Welcome to Predixion Finance
+              Predixion Finance mein Aapka Swagat Hai
             </h1>
             <p className="text-gray-600">
-              Enter your phone number to get started with your debt collection assistant
+              Apna phone number enter karke debt collection assistant ke saath shuru karein
             </p>
           </div>
 
@@ -376,7 +376,7 @@ function App() {
                 disabled={loading}
                 className="input appearance-none bg-white pr-10"
               >
-                <option value="">Select phone number</option>
+                <option value="">Phone number select karein</option>
                 <option value="+917219559972">+91 72195 59972</option>
                 <option value="+919876543210">+91 98765 43210</option>
                 <option value="+919876543211">+91 98765 43211</option>
@@ -389,7 +389,7 @@ function App() {
               </div>
             </div>
             <p className="text-xs text-gray-500">
-              Test numbers available for demo
+              Demo ke liye test numbers available hain
             </p>
           </div>
 
@@ -398,7 +398,7 @@ function App() {
             disabled={loading || !phone.trim()}
             className="btn btn-primary btn-lg w-full"
           >
-            {loading ? "Starting..." : "Start Chat"}
+            {loading ? "Shuru ho raha hai..." : "Chat Shuru Karein"}
           </button>
         </div>
       ) : (

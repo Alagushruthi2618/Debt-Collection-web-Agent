@@ -6,7 +6,7 @@ from ..utils.llm import classify_intent
 
 def payment_check_node(state: CallState) -> dict:
     """
-    Classify customer's payment intent using Gemini-powered classification.
+    Classify customer's payment intent using Azure OpenAI-powered classification.
     
     This node determines the customer's response to the debt disclosure
     and routes them to the appropriate next step.
@@ -28,8 +28,20 @@ def payment_check_node(state: CallState) -> dict:
             "stage": "payment_check",
             "awaiting_user": True,
         }
+    
+    # Guardrail: Ignore date-like inputs (DOB format: DD-MM-YYYY)
+    # These are from verification, not payment responses
+    import re
+    date_pattern = r'^\d{2}-\d{2}-\d{4}$'
+    if re.match(date_pattern, user_input.strip()):
+        # This is a DOB, not a payment response - wait for actual input
+        return {
+            "stage": "payment_check",
+            "awaiting_user": True,
+            "last_user_input": None,  # Clear it so we don't process it again
+        }
 
-    # Classify intent using improved Gemini-based classifier
+    # Classify intent using improved Azure OpenAI-based classifier
     print(f"\n[PAYMENT_CHECK] Analyzing user input: '{user_input}'")
     intent = classify_intent(user_input).strip().lower()
     print(f"[PAYMENT_CHECK] Classified intent: {intent}\n")
@@ -44,10 +56,10 @@ def payment_check_node(state: CallState) -> dict:
     payment_status = alias_map.get(intent, intent)
 
     # Validate that we got a valid status
-    valid_statuses = ["paid", "disputed", "callback", "unable", "willing"]
+    valid_statuses = ["paid", "disputed", "callback", "unable", "willing", "unknown"]
     if payment_status not in valid_statuses:
-        print(f"[WARNING] Unexpected payment status: {payment_status}, defaulting to 'unable'")
-        payment_status = "unable"
+        print(f"[WARNING] Unexpected payment status: {payment_status}, defaulting to 'unknown'")
+        payment_status = "unknown"
 
     return {
         "payment_status": payment_status,

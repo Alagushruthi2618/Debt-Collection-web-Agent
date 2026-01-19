@@ -15,7 +15,7 @@ This agent simulates real-world debt collection calls by:
 
 ### Core Layers
 - **Agent Orchestration**: LangGraph state machine
-- **LLM Layer**: Google Gemini (with deterministic fallback)
+- **LLM Layer**: Azure OpenAI (with deterministic fallback)
 - **Observability & Evaluation**: LangSmith
 - **CLI Interface**: Manual call simulation via terminal
 - **Web Interface**: React frontend with FastAPI backend
@@ -118,7 +118,11 @@ pip install -r requirements.txt
 Create a `.env` file in the project root:
 
 ```env
-GOOGLE_API_KEY=your_gemini_api_key
+AZURE_OPENAI_API_KEY=your_azure_openai_api_key
+AZURE_OPENAI_ENDPOINT=https://llm-3rdparty.cognitiveservices.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4.1-mini
+AZURE_OPENAI_MODEL=gpt-4.1-mini
+AZURE_OPENAI_API_VERSION=2024-12-01-preview
 
 LANGCHAIN_TRACING_V2=true
 LANGCHAIN_API_KEY=your_langsmith_api_key
@@ -260,7 +264,7 @@ Experiments are versioned automatically (v3-required-cases-*) for comparison.
 
 ### Core Capabilities
 - **Secure DOB-based identity verification** (max 3 attempts, multiple format support)
-- **Natural language intent classification** using Google Gemini with rule-based fallback
+- **Natural language intent classification** using Azure OpenAI with rule-based fallback
 - **Flexible negotiation** with multiple payment plans (EMI, partial, deferred)
 - **PTP (Promise to Pay) recording** with automatic reference number generation
 - **Dispute handling** with ticket creation and tracking
@@ -337,7 +341,7 @@ Experiments are versioned automatically (v3-required-cases-*) for comparison.
 
 **Solution**: 
 - Expanded rule-based patterns to cover 50+ variations per intent category
-- Improved Gemini prompt with clear examples and edge case guidance
+- Improved Azure OpenAI prompt with clear examples and edge case guidance
 - Enhanced fallback logic to default to "willing" for payment-related responses
 - Added smart pattern matching for partial payment willingness
 

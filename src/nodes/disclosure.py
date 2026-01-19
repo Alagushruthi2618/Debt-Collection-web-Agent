@@ -29,9 +29,9 @@ def disclosure_node(state: CallState) -> dict:
         raise ValueError("Invalid state: outstanding_amount must be a non-negative number")
     
     message = (
-        f"I'm reaching out regarding your outstanding payment of ₹{amount:,.0f}. "
-        f"This is an attempt to collect a debt. "
-        f"Are you able to make this payment today?"
+        f"Main aapke outstanding payment ke baare mein call kar raha/rahi hoon - ₹{amount:,.0f}. "
+        f"Yeh ek debt collection attempt hai. "
+        f"Kya aap aaj yeh payment kar sakte hain?"
     )
     
     return {

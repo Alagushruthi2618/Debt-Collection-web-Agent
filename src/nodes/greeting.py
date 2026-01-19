@@ -27,9 +27,9 @@ def greeting_node(state: CallState) -> dict:
     # If not yet greeted, ask the question
     if not state.get("has_greeted"):
         message = (
-            f"Hello {first_name}! 👋 "
-            f"I'm reaching out from ABC Finance. "
-            f"Are you {customer_name}?"
+            f"Namaste {first_name}! 👋 "
+            f"Main ABC Finance se call kar raha/rahi hoon. "
+            f"Kya aap {customer_name} hain?"
         )
 
         return {
@@ -46,11 +46,14 @@ def greeting_node(state: CallState) -> dict:
     # Already greeted - check user response
     user_input = state.get("last_user_input", "").strip().lower() if state.get("last_user_input") else ""
     
-    # Check for negative responses
+    # Check for negative responses (including Hinglish)
     negative_responses = [
         "no", "nope", "not me", "wrong person", "that's not me", "that is not me",
         "i'm not", "i am not", "incorrect", "wrong", "no i'm not", "no i am not",
-        "that's wrong", "that is wrong", "n", "nah", "no way"
+        "that's wrong", "that is wrong", "n", "nah", "no way",
+        # Hinglish phrases
+        "nahi", "main nahi hoon", "galat person", "yeh main nahi hoon",
+        "yeh mera naam nahi hai", "galat hai", "sahi nahi hai"
     ]
     
     is_negative = any(neg in user_input for neg in negative_responses)
@@ -58,8 +61,9 @@ def greeting_node(state: CallState) -> dict:
     if is_negative:
         # User said no - show message and end call
         error_message = (
-            "I apologize for the confusion. It seems we've reached the wrong person. "
-            "Please contact our support team if you believe this is an error. Thank you for your time."
+            "Mujhe maaf kijiye, lagta hai hum galat number par call kar rahe hain. "
+            "Agar aapko lagta hai ki yeh galat hai, toh kripya hamare support team se contact karein. "
+            "Aapka time dene ke liye dhanyawad."
         )
         return {
             "messages": state["messages"] + [{

@@ -44,7 +44,11 @@ Open your browser and go to: **http://localhost:5173**
 
 Make sure your `.env` file in the project root has:
 ```
-GEMINI_API_KEY=your_api_key_here
+AZURE_OPENAI_API_KEY=your_api_key_here
+AZURE_OPENAI_ENDPOINT=https://llm-3rdparty.cognitiveservices.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4.1-mini
+AZURE_OPENAI_MODEL=gpt-4.1-mini
+AZURE_OPENAI_API_VERSION=2024-12-01-preview
 ```
 
 ## Testing the API Directly

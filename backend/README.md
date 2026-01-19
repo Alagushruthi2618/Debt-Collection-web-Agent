@@ -148,7 +148,11 @@ pip install -r requirements.txt
 2. **Set Environment Variables:**
 ```bash
 # .env file
-GEMINI_API_KEY=your_api_key_here
+AZURE_OPENAI_API_KEY=your_api_key_here
+AZURE_OPENAI_ENDPOINT=https://llm-3rdparty.cognitiveservices.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4.1-mini
+AZURE_OPENAI_MODEL=gpt-4.1-mini
+AZURE_OPENAI_API_VERSION=2024-12-01-preview
 ```
 
 3. **Run the Server:**

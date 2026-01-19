@@ -13,5 +13,9 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
+# Temporary Excel files
+~$*.xlsx
+~$*.xls
+
 # Test/Debug scripts
 test_gemini_models.py

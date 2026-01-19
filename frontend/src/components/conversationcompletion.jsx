@@ -7,8 +7,8 @@ function ConversationCompletion({ onRateConversation }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <p className="text-sm font-semibold text-gray-900 mb-1">Conversation completed</p>
-        <p className="text-xs text-gray-500">Thank you for using our service</p>
+        <p className="text-sm font-semibold text-gray-900 mb-1">Conversation complete ho gaya</p>
+        <p className="text-xs text-gray-500">Hamari service use karne ke liye dhanyawad</p>
       </div>
       
       <div className="flex justify-center">
@@ -16,7 +16,7 @@ function ConversationCompletion({ onRateConversation }) {
           onClick={onRateConversation}
           className="btn btn-primary"
         >
-          Rate conversation
+          Conversation Rate Karein
         </button>
       </div>
     </div>

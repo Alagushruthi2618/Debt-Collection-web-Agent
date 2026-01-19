@@ -6,7 +6,7 @@ This guide covers how to test both the backend API and the frontend web applicat
 
 1. **Python 3.8+** installed
 2. **Node.js and npm** installed
-3. **Gemini API Key** - Get one from [Google AI Studio](https://makersuite.google.com/app/apikey)
+3. **Azure OpenAI API Key** - Configure your Azure OpenAI credentials
 
 ## Quick Start Testing
 
@@ -15,7 +15,11 @@ This guide covers how to test both the backend API and the frontend web applicat
 Create a `.env` file in the project root:
 
 ```bash
-GEMINI_API_KEY=your_gemini_api_key_here
+AZURE_OPENAI_API_KEY=your_azure_openai_api_key_here
+AZURE_OPENAI_ENDPOINT=https://llm-3rdparty.cognitiveservices.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4.1-mini
+AZURE_OPENAI_MODEL=gpt-4.1-mini
+AZURE_OPENAI_API_VERSION=2024-12-01-preview
 ```
 
 ### Step 2: Start the Backend Server
@@ -411,7 +415,7 @@ Open browser DevTools (F12) and check:
    - Make sure you initialized the session first
    - Check that session_id is being stored correctly
 
-2. **"GEMINI_API_KEY not set"**
+2. **"AZURE_OPENAI_API_KEY not set"**
    - Check that `.env` file exists in project root
    - Verify the API key is correct
 

@@ -65,7 +65,7 @@ function UserInput({ onSend, disabled, onScreenshotUpload, showScreenshotButton 
             onClick={handleScreenshotClick}
             disabled={false}
             className="btn btn-secondary w-10 h-10 p-0 flex items-center justify-center"
-            title="Upload screenshot"
+            title="Screenshot upload karein"
           >
             <svg
               width="20"
@@ -100,10 +100,10 @@ function UserInput({ onSend, disabled, onScreenshotUpload, showScreenshotButton 
           onKeyPress={handleKeyPress}
           placeholder={
             disabled && !isThinking 
-              ? "Chat completed" 
+              ? "Chat complete ho gaya" 
               : isThinking 
-              ? "Assistant is typing..." 
-              : "Type your message..."
+              ? "Assistant typing kar raha hai..." 
+              : "Apna message type karein..."
           }
           className="input"
         />

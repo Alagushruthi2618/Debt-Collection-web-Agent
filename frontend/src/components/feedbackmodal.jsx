@@ -13,7 +13,7 @@ function FeedbackModal({ isOpen, onClose, onSubmit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (rating === 0) {
-      setSubmitError("Please select a rating");
+      setSubmitError("Kripya ek rating select karein");
       return;
     }
 
@@ -30,7 +30,7 @@ function FeedbackModal({ isOpen, onClose, onSubmit }) {
       }, 500);
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      setSubmitError(error.message || "Failed to submit feedback. Please try again.");
+      setSubmitError(error.message || "Feedback submit karne mein asafal. Kripya phir se try karein.");
     } finally {
       setIsSubmitting(false);
     }
@@ -50,7 +50,7 @@ function FeedbackModal({ isOpen, onClose, onSubmit }) {
         <div className="p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold text-gray-800">Rate Your Experience</h2>
+            <h2 className="text-2xl font-semibold text-gray-800">Apna Experience Rate Karein</h2>
             <button
               onClick={handleClose}
               disabled={isSubmitting}
@@ -66,7 +66,7 @@ function FeedbackModal({ isOpen, onClose, onSubmit }) {
           {/* Rating Section */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              How would you rate this conversation?
+              Aap is conversation ko kaise rate karenge?
             </label>
             <div className="flex justify-center gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
@@ -96,11 +96,11 @@ function FeedbackModal({ isOpen, onClose, onSubmit }) {
             </div>
             {rating > 0 && (
               <p className="text-center text-sm text-gray-600 mt-2">
-                {rating === 5 && "Excellent"}
-                {rating === 4 && "Great"}
-                {rating === 3 && "Good"}
-                {rating === 2 && "Fair"}
-                {rating === 1 && "Poor"}
+                {rating === 5 && "Bahut Achha"}
+                {rating === 4 && "Achha"}
+                {rating === 3 && "Theek"}
+                {rating === 2 && "Kharab"}
+                {rating === 1 && "Bahut Kharab"}
               </p>
             )}
           </div>
@@ -115,7 +115,7 @@ function FeedbackModal({ isOpen, onClose, onSubmit }) {
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
               disabled={isSubmitting}
-              placeholder="Tell us about your experience..."
+              placeholder="Apna experience share karein..."
               rows={4}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
             />
@@ -124,7 +124,7 @@ function FeedbackModal({ isOpen, onClose, onSubmit }) {
           {/* Success Message */}
           {isSuccess && (
             <div className="mb-4 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm text-center font-medium">
-              ✓ Thank you for your feedback!
+              ✓ Aapke feedback ke liye dhanyawad!
             </div>
           )}
 
@@ -152,7 +152,7 @@ function FeedbackModal({ isOpen, onClose, onSubmit }) {
                 disabled={isSubmitting || rating === 0}
                 className="flex-1 px-4 py-2.5 text-sm font-semibold bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "Submitting..." : "Submit Feedback"}
+                {isSubmitting ? "Submit ho raha hai..." : "Feedback Submit Karein"}
               </button>
             </div>
           )}

@@ -13,7 +13,11 @@ pip install -r requirements.txt
 Create a `.env` file in the project root:
 
 ```bash
-GEMINI_API_KEY=your_gemini_api_key_here
+AZURE_OPENAI_API_KEY=your_azure_openai_api_key_here
+AZURE_OPENAI_ENDPOINT=https://llm-3rdparty.cognitiveservices.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4.1-mini
+AZURE_OPENAI_MODEL=gpt-4.1-mini
+AZURE_OPENAI_API_VERSION=2024-12-01-preview
 ```
 
 ### 3. Start the Server
@@ -139,7 +143,7 @@ The frontend (Shruti) should:
 - Check that you're using the correct `session_id`
 
 **Agent not responding?**
-- Check that `GEMINI_API_KEY` is set in `.env`
+- Check that `AZURE_OPENAI_API_KEY` is set in `.env`
 - Check server logs for errors
 - Verify the phone number exists in `src/data.py`
 

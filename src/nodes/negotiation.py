@@ -28,6 +28,9 @@ def extract_amount(text: str) -> float:
             amount_str = str(match).replace(',', '')
             try:
                 amount = float(amount_str)
+                # Filter out years (4-digit numbers between 1900-2020 are likely years, not amounts)
+                if 1900 <= amount <= 2020:
+                    continue  # This is likely a year, not an amount
                 if amount > 100:  # Reasonable minimum for debt payment
                     return amount
             except ValueError:
@@ -71,12 +74,25 @@ def extract_date(text: str) -> str:
                     return f"{day.zfill(2)}-{month_num}-{year}"
     
     # Try DD-MM-YYYY or DD/MM/YYYY format (with or without year)
-    date_pattern = r'(\d{1,2})[-/\s](\d{1,2})(?:[-/\s]?(202[5-9]))?'
+    # Match dates with full year (4 digits) - this includes DOB dates
+    date_pattern_full = r'(\d{1,2})[-/\s](\d{1,2})[-/\s](\d{4})'
+    match_full = re.search(date_pattern_full, text)
+    if match_full:
+        day, month, year = match_full.groups()
+        year_int = int(year)
+        # Filter out DOB dates (years before 2020 are likely DOB, not commitment dates)
+        if year_int < 2020:
+            return None  # This is a DOB, not a commitment date
+        if 1 <= int(day) <= 31 and 1 <= int(month) <= 12:
+            return f"{day.zfill(2)}-{month.zfill(2)}-{year}"
+    
+    # Try DD-MM-YYYY or DD/MM/YYYY format without year (defaults to 2025)
+    date_pattern = r'(\d{1,2})[-/\s](\d{1,2})(?![-/\s]?\d{4})'
     match = re.search(date_pattern, text)
     if match:
-        day, month, year = match.groups()
+        day, month = match.groups()
         if 1 <= int(day) <= 31 and 1 <= int(month) <= 12:
-            year = year if year else "2025"
+            year = "2025"  # Default to current/future year
             return f"{day.zfill(2)}-{month.zfill(2)}-{year}"
     
     # Try relative dates: "tomorrow", "next week", "next month", "15th", etc.
@@ -179,7 +195,7 @@ def has_commitment_details(state: CallState, last_user_input: str) -> tuple:
                         
                         if matches:
                             selected_plan = plan
-                            print(f"[PLAN DETECTION] ✅ Matched to plan: {plan['name']}")
+                            print(f"[PLAN DETECTION] OK: Matched to plan: {plan['name']}")
                             amount_match = re.search(r'₹(\d+(?:,\d+)*)', plan['description'])
                             if amount_match:
                                 committed_amount = float(amount_match.group(1).replace(',', ''))
@@ -261,8 +277,16 @@ def has_commitment_details(state: CallState, last_user_input: str) -> tuple:
             if not committed_date:
                 date = extract_date(content)
                 if date:
-                    committed_date = date
-                    print(f"[DATE DETECTION] Found date: {date}")
+                    # Filter out DOB dates (dates before 2020 are likely DOB, not commitment dates)
+                    date_parts = date.split('-')
+                    if len(date_parts) == 3:
+                        year = int(date_parts[2])
+                        # Only accept dates from 2020 onwards (commitment dates should be future dates)
+                        if year >= 2020:
+                            committed_date = date
+                            print(f"[DATE DETECTION] Found date: {date}")
+                        else:
+                            print(f"[DATE DETECTION] Ignoring past date (likely DOB): {date}")
             
             if not committed_amount and not selected_plan:
                 amount = extract_amount(content)
@@ -348,7 +372,7 @@ def negotiation_node(state: CallState) -> dict:
     
     # If we have both - CLOSE IMMEDIATELY
     if has_both:
-        print(f"[NEGOTIATION] ✅ Full commitment received - CLOSING NOW")
+        print(f"[NEGOTIATION] OK: Full commitment received - CLOSING NOW")
         
         # Guardrail: Validate commitment data before saving
         if not committed_amount or committed_amount <= 0:
@@ -369,10 +393,10 @@ def negotiation_node(state: CallState) -> dict:
         print(f"[NEGOTIATION] PTP saved with ID: {ptp_id}")
         
         response = (
-            f"Perfect, {customer_name}. I've documented your commitment to the {plan_name} "
-            f"with payment of ₹{committed_amount:,.0f} starting on {committed_date}. "
-            f"Your PTP reference number is {ptp_id}. "
-            f"You'll receive a confirmation shortly. Thank you for working this out with us. Have a great day!"
+            f"Perfect, {customer_name}. Maine aapka commitment document kar diya hai - {plan_name} "
+            f"ke saath ₹{committed_amount:,.0f} ki payment {committed_date} se shuru hogi. "
+            f"Aapka PTP reference number hai {ptp_id}. "
+            f"Aapko jaldi hi confirmation mil jayega. Is matter ko resolve karne ke liye dhanyawad. Aapka din achha rahe!"
         )
         
         # Return with is_complete=True to END the call
@@ -396,8 +420,8 @@ def negotiation_node(state: CallState) -> dict:
     if selected_plan and not committed_date:
         print(f"[NEGOTIATION] Plan selected, asking for date")
         response = (
-            f"Great choice, {customer_name}! I've noted the {selected_plan['name']}. "
-            f"When would you like to make your first payment?"
+            f"Bahut achha choice, {customer_name}! Maine {selected_plan['name']} note kar liya hai. "
+            f"Aap pehli payment kab karna chahenge?"
         )
         return {
             "messages": state["messages"] + [{
@@ -418,9 +442,9 @@ def negotiation_node(state: CallState) -> dict:
     if should_close:
         print(f"[NEGOTIATION] Closing conversation (user_wants_to_end={user_wants_to_end}, turns={negotiation_turns})")
         response = (
-            f"Thank you, {customer_name}. I've documented our discussion. "
-            f"We'll follow up with you shortly to finalize the arrangement. "
-            f"Have a good day."
+            f"Dhanyawad, {customer_name}. Maine hamari discussion document kar di hai. "
+            f"Hum jaldi hi aapke saath follow-up karke arrangement finalize kar denge. "
+            f"Aapka din achha rahe."
         )
         return {
             "messages": state["messages"] + [{
@@ -450,16 +474,16 @@ def negotiation_node(state: CallState) -> dict:
         
         if plans and len(plans) > 0:
             if negotiation_turns == 0:
-                response = f"I appreciate your willingness to work this out, {customer_name}. Let me show you some options:\n\n"
+                response = f"Main aapki willingness ki kadar karta hoon, {customer_name}. Chaliye main aapko kuch options dikhata hoon:\n\n"
             else:
-                response = f"Of course, {customer_name}. Here are some payment options:\n\n"
+                response = f"Bilkul, {customer_name}. Yahan kuch payment options hain:\n\n"
             
             for i, plan in enumerate(plans, 1):
                 # Remove any markdown asterisks from plan name
                 clean_name = plan['name'].replace('**', '').strip()
                 response += f"{i}. {clean_name}: {plan['description']}\n"
             
-            response += f"\nWhich option works best for you?"
+            response += f"\nAapke liye kaunsa option best rahega?"
             
             return {
                 "offered_plans": plans,
@@ -477,8 +501,8 @@ def negotiation_node(state: CallState) -> dict:
                 "messages": state["messages"] + [{
                     "role": "assistant",
                     "content": (
-                        f"I appreciate your willingness to work this out, {customer_name}. "
-                        f"Could you let me know what monthly amount and date would work for you?"
+                        f"Main aapki willingness ki kadar karta hoon, {customer_name}. "
+                        f"Kya aap mujhe bata sakte hain ki monthly kitna amount aur kab ka date aapke liye theek rahega?"
                     )
                 }],
                 "stage": "negotiation",
@@ -498,7 +522,7 @@ def negotiation_node(state: CallState) -> dict:
         for plan in state["offered_plans"]:
             plans_context += f"- {plan['name']}: {plan['description']}\n"
     
-    context = f"""You are a professional debt collection agent.
+    context = f"""Aap ek professional debt collection agent hain. Hinglish mein respond karein (Hindi aur English mix).
 
 Customer: {customer_name}
 Outstanding: ₹{amount:,.0f}
@@ -507,9 +531,9 @@ Recent conversation:
 {recent_conversation}
 {plans_context}
 
-Customer said: "{last_user_input}"
+Customer ne kaha: "{last_user_input}"
 
-Task: Respond naturally. If they selected a plan, confirm it and ask for payment date. If they mentioned a date, confirm it. Be brief (2-3 sentences).
+Task: Naturally respond karein Hinglish mein. Agar unhone plan select kiya hai, confirm karein aur payment date puchhein. Agar unhone date mention kiya hai, confirm karein. Brief rahein (2-3 sentences).
 
 Response:"""
 
@@ -520,13 +544,13 @@ Response:"""
         
         if committed_date and not committed_amount and not selected_plan:
             response = (
-                f"Thank you for that date, {customer_name}. "
-                f"Could you confirm which payment plan works best for you?"
+                f"Us date ke liye dhanyawad, {customer_name}. "
+                f"Kya aap confirm kar sakte hain ki kaunsa payment plan aapke liye best rahega?"
             )
         else:
             response = (
-                f"I appreciate your input, {customer_name}. "
-                f"To finalize this, could you confirm the payment plan and date that work for you?"
+                f"Main aapke input ki kadar karta hoon, {customer_name}. "
+                f"Ise finalize karne ke liye, kya aap payment plan aur date confirm kar sakte hain jo aapke liye theek ho?"
             )
     
     return {

@@ -1,0 +1,1130 @@
+{
+  "already_paid": {
+    "total": 30,
+    "passed": 28,
+    "failed": 2,
+    "test_cases": [
+      {
+        "input": "Main ne pehle hi payment kar diya hai",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Payment ho gaya hai last week",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Main ne transfer kar diya amount",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Dues clear ho gaye hain",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Main ne already pay kar diya",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Maine payment kar di thi pichle mahine",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Amount transfer ho chuka hai",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Main ne sab paise de diye hain",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Payment complete ho gaya hai",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Maine loan clear kar diya hai",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Main ne pehle hi settle kar diya",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Payment receipt bhej di hai",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Maine UPI se transfer kar diya",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Bank se payment ho gaya hai",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Maine cheque bhej diya hai",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Online payment kar diya maine",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Maine full amount pay kar diya",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Payment done hai last month",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Maine EMI pay kar di thi",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Account clear ho gaya hai mera",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Maine payment proof bhej diya",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Transaction complete ho gaya",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Maine sab dues clear kar diye",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Payment successful ho gaya",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Maine loan amount pay kar diya",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Mera payment process ho gaya",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Maine payment confirm kar diya",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Amount deduct ho gaya hai",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Maine payment kar di thi kal",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      },
+      {
+        "input": "Payment receipt mil gaya hai",
+        "passed": true,
+        "detected_status": "paid",
+        "error": ""
+      }
+    ],
+    "pass_rate": 0.9333333333333333
+  },
+  "dispute": {
+    "total": 30,
+    "passed": 30,
+    "failed": 0,
+    "test_cases": [
+      {
+        "input": "Yeh loan mera nahi hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine yeh loan kabhi nahi liya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh galat hai, mujhe kuch nahi dena",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh fraud lagta hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh mera account nahi hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine yeh loan apply nahi kiya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh meri loan nahi hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine kabhi yeh loan nahi liya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh mistake hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh wrong person hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine yeh debt nahi liya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh unauthorized transaction hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine yeh loan sign nahi kiya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh identity theft lagta hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine yeh loan approve nahi kiya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh meri responsibility nahi hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine yeh loan accept nahi kiya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh error hai system mein",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine yeh loan acknowledge nahi kiya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh meri liability nahi hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine yeh loan authorize nahi kiya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh fake loan hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine yeh loan verify nahi kiya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh meri mistake nahi hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine yeh loan process nahi kiya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh wrong account hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine yeh loan document nahi sign kiya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh meri fault nahi hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Maine yeh loan agree nahi kiya",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Yeh incorrect information hai",
+        "passed": true,
+        "detected_status": "disputed",
+        "error": ""
+      }
+    ],
+    "pass_rate": 1.0
+  },
+  "callback": {
+    "total": 30,
+    "passed": 30,
+    "failed": 0,
+    "test_cases": [
+      {
+        "input": "Aap baad mein call kar sakte hain?",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Main abhi busy hoon, kal call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Abhi available nahi hoon, next week call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Main out of town hoon, next month call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Abhi baat nahi kar sakta, baad mein call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Kal call karo please",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Main abhi office mein hoon, baad mein call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Next week call kar lena",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Abhi time nahi hai, evening mein call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Main travel kar raha hoon, baad mein call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Abhi meeting mein hoon, baad mein call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Tomorrow call karo please",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Main abhi driving kar raha hoon",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Weekend mein call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Abhi convenient nahi hai",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Baad mein call kar lena",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Main abhi ghar par nahi hoon",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Next month call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Abhi discuss nahi kar sakta",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Kal subah call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Main abhi hospital mein hoon",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Evening mein call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Abhi baat karne ka time nahi hai",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Next week available rahunga",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Main abhi family ke saath hoon",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Baad mein call kar lena please",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Abhi busy hoon, later call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Tomorrow evening call karo",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Main abhi important work mein hoon",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      },
+      {
+        "input": "Next week call kar lena",
+        "passed": true,
+        "detected_status": "callback",
+        "error": ""
+      }
+    ],
+    "pass_rate": 1.0
+  },
+  "unable_to_pay": {
+    "total": 30,
+    "passed": 12,
+    "failed": 18,
+    "test_cases": [
+      {
+        "input": "Meri naukri chali gayi, paise nahi hain",
+        "passed": true,
+        "detected_status": "unable",
+        "error": ""
+      },
+      {
+        "input": "Main abhi kuch bhi pay nahi kar sakta",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Main financially struggling hoon",
+        "passed": true,
+        "detected_status": "unable",
+        "error": ""
+      },
+      {
+        "input": "Meri income nahi hai",
+        "passed": true,
+        "detected_status": "unable",
+        "error": ""
+      },
+      {
+        "input": "Paise nahi hain, kuch nahi de sakta",
+        "passed": true,
+        "detected_status": "unable",
+        "error": ""
+      },
+      {
+        "input": "Main jobless hoon, paise nahi hain",
+        "passed": true,
+        "detected_status": "unable",
+        "error": ""
+      },
+      {
+        "input": "Meri salary bandh ho gayi hai",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Main broke hoon, kuch nahi de sakta",
+        "passed": true,
+        "detected_status": "unable",
+        "error": ""
+      },
+      {
+        "input": "Mere paas paise nahi hain",
+        "passed": true,
+        "detected_status": "unable",
+        "error": ""
+      },
+      {
+        "input": "Main afford nahi kar sakta",
+        "passed": true,
+        "detected_status": "unable",
+        "error": ""
+      },
+      {
+        "input": "Meri financial condition theek nahi hai",
+        "passed": false,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Main paise nahi de sakta abhi",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Meri savings khatam ho gayi",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Main unemployed hoon",
+        "passed": true,
+        "detected_status": "unable",
+        "error": ""
+      },
+      {
+        "input": "Mere paas funds nahi hain",
+        "passed": false,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Main financially weak hoon",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Meri income source bandh ho gayi",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Main paise nahi de sakta",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Meri financial situation kharab hai",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Main broke hoon abhi",
+        "passed": true,
+        "detected_status": "unable",
+        "error": ""
+      },
+      {
+        "input": "Mere paas money nahi hai",
+        "passed": false,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Main afford nahi kar sakta payment",
+        "passed": true,
+        "detected_status": "unable",
+        "error": ""
+      },
+      {
+        "input": "Meri job chali gayi hai",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Main financially unstable hoon",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Mere paas resources nahi hain",
+        "passed": false,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Main paise nahi de sakta right now",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Meri financial crisis hai",
+        "passed": true,
+        "detected_status": "unable",
+        "error": ""
+      },
+      {
+        "input": "Main paise nahi de sakta abhi",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Mere paas funds available nahi hain",
+        "passed": false,
+        "detected_status": "disputed",
+        "error": ""
+      },
+      {
+        "input": "Main financially unable hoon",
+        "passed": false,
+        "detected_status": "unknown",
+        "error": ""
+      }
+    ],
+    "pass_rate": 0.4
+  },
+  "willing": {
+    "total": 30,
+    "passed": 30,
+    "failed": 0,
+    "test_cases": [
+      {
+        "input": "Main pay karna chahta hoon lekin full amount nahi de sakta",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Kya main installments mein pay kar sakta hoon?",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main pay karne ko ready hoon, payment options dikhao",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main monthly pay kar sakta hoon, kya options hain?",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main settle karna chahta hoon, kya hum plan bana sakte hain?",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main EMI mein pay kar sakta hoon",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Payment plan de do please",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main partial payment kar sakta hoon",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Kya main monthly installments de sakta hoon?",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main pay karne ko willing hoon",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Payment options dikhao please",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main monthly basis par pay kar sakta hoon",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Kya main thoda thoda pay kar sakta hoon?",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main payment karne ko ready hoon",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "EMI plan chahiye mujhe",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main pay kar sakta hoon but installments mein",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Payment options kya hain?",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main settle kar sakta hoon but plan chahiye",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main monthly pay kar sakta hoon",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Kya main payment plan le sakta hoon?",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main pay karne ko interested hoon",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Payment options batao please",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main monthly EMI de sakta hoon",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Kya main payment plan choose kar sakta hoon?",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main pay kar sakta hoon but monthly basis par",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Payment options dikhao",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main settle kar sakta hoon installment mein",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Kya main payment plan select kar sakta hoon?",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Main pay karne ko ready hoon, options chahiye",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      },
+      {
+        "input": "Payment plan ke liye ready hoon main",
+        "passed": true,
+        "detected_status": "willing",
+        "error": ""
+      }
+    ],
+    "pass_rate": 1.0
+  },
+  "unknown": {
+    "total": 30,
+    "passed": 30,
+    "failed": 0,
+    "test_cases": [
+      {
+        "input": "Hi",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Yeh kaun hai?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Samajh nahi aaya",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Aap kya keh rahe hain?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Explain kar sakte hain?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Hello",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Kya baat hai?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Mujhe samajh nahi aaya",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Aap kya bol rahe hain?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Kya matlab hai?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Haan",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Nahi",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Theek hai",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Achha",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Ok",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Kya?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Kaise?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Kyun?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Kahan?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Kab?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Kaun?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Kya hua?",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Batao",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Suno",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Dekho",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Wait",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Ruko",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Thoda ruko",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Ek minute",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      },
+      {
+        "input": "Just a moment",
+        "passed": true,
+        "detected_status": "unknown",
+        "error": ""
+      }
+    ],
+    "pass_rate": 1.0
+  }
+}

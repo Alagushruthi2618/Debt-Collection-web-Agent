@@ -20,9 +20,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # Check for required environment variables
-if not os.getenv("GEMINI_API_KEY"):
-    print("[WARNING] GEMINI_API_KEY not set. The server will start but API calls may fail.")
-    print("Please create a .env file in the project root with: GEMINI_API_KEY=your_api_key_here")
+if not os.getenv("AZURE_OPENAI_API_KEY"):
+    print("[WARNING] AZURE_OPENAI_API_KEY not set. The server will start but API calls may fail.")
+    print("Please create a .env file in the project root with: AZURE_OPENAI_API_KEY=your_api_key_here")
 
 # Try to import routes with error handling
 try:

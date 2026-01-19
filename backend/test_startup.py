@@ -20,11 +20,11 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-api_key = os.getenv("GEMINI_API_KEY")
+api_key = os.getenv("AZURE_OPENAI_API_KEY")
 if api_key:
-    print(f"  [OK] GEMINI_API_KEY found: {api_key[:10]}...{api_key[-4:]}")
+    print(f"  [OK] AZURE_OPENAI_API_KEY found: {api_key[:10]}...{api_key[-4:]}")
 else:
-    print("  [WARN] GEMINI_API_KEY not set (server will start but API calls may fail)")
+    print("  [WARN] AZURE_OPENAI_API_KEY not set (server will start but API calls may fail)")
 
 # Test 2: Import FastAPI
 print("\n[2] Testing FastAPI import...")
