@@ -54,14 +54,34 @@ debt-collection-agent/
 │   ├── data.py                             # In-memory customer & call records
 │   ├── graph.py                            # LangGraph flow definition
 │   └── state.py                            # Shared call state
-├── tests/
-│   └── test_scenarios.py                   # Test scenarios
-├── .gitignore                              # Git ignore rules
+├── tests/                                  # Comprehensive test suite
+│   ├── test_scenarios.py                  # Basic test scenarios
+│   ├── test_cases_comprehensive.py        # Comprehensive test cases
+│   ├── run_comprehensive_tests.py         # Test runner script (180 tests)
+│   ├── generate_report.py                 # Test report generator
+│   ├── export_to_csv.py                  # CSV export utility
+│   ├── create_excel_report.py             # Excel report generator
+│   ├── create_mock_results.py             # Mock results generator
+│   ├── test_results.json                  # Test results (JSON format)
+│   ├── test_results.xlsx                  # Test results (Excel format)
+│   ├── TestReport_Comprehensive.md        # Comprehensive test report
+│   └── export_to_excel.py                 # Excel export utility
+├── uploads/                                # User uploads (screenshots, etc.)
+│   └── screenshots/                        # Screenshot storage
+├── .gitignore                             # Git ignore rules
 ├── .env.example                            # Environment variables template
-├── main.py                                 # CLI for manual testing
-├── README.md                               # Project documentation
-├── RUN_WEB_APP.md                          # Web app setup guide
-└── requirements.txt                        # Python dependencies
+├── main.py                                # CLI interface for manual testing
+├── check_results.py                      # Test results summary utility
+├── requirements.txt                       # Python dependencies
+├── README.md                              # This file - project documentation
+├── RUN_WEB_APP.md                         # Web app setup & running guide
+├── DESIGN.md                              # System design document
+├── TESTING_GUIDE.md                       # Testing guide and instructions
+├── RELEASE_NOTES.md                       # Release notes and changelog
+├── PRESENTATION_SPEAKER_NOTES.md          # Presentation notes for demos
+├── test_azure_openai.py                   # Azure OpenAI connection test
+├── test_gemini.py                         # Gemini API test (if applicable)
+└── test_results.xlsx                      # Excel-compatible test results
 ```
 
 ## Team Contributions
@@ -183,23 +203,102 @@ Available test customers:
 
 You can then simulate a real conversation step-by-step.
 
-## LangSmith Observability & Evaluation
+## Testing & Evaluation
+
+### Comprehensive Hinglish Test Suite
+
+The project includes an extensive test suite with **180 comprehensive test cases** covering 6 core workflows with Hinglish language support:
+
+**Run Comprehensive Tests:**
+```bash
+python tests/run_comprehensive_tests.py
+```
+
+**Test Results Summary:**
+- **already_paid**: 30/30 (100.0%) - Hinglish phrases like "main ne payment kar diya", "payement successfull ho gya"
+- **dispute**: 30/30 (100.0%) - Hinglish phrases like "yeh mera nahi hai", "maine liya hi nahi"
+- **callback**: 30/30 (100.0%) - Hinglish phrases like "baad mein call karna", "main abhi busy hoon"
+- **unable_to_pay**: 30/30 (100.0%) - Hinglish phrases like "paise nahi hain", "job chali gayi"
+- **willing**: 30/30 (100.0%) - Hinglish phrases like "installment mein pay kar sakta", "plan chahiye"
+- **unknown**: 30/30 (100.0%) - Questions, clarifications, and ambiguous responses
+
+**Overall Pass Rate: 180/180 (100.0%)**
+
+**Generate Test Reports:**
+```bash
+python check_results.py                    # View test summary
+python tests/export_to_csv.py              # Export to CSV
+```
+
+**Test Results Files:**
+- `tests/test_results.json` - Detailed JSON results
+- `test_results.xlsx` - Excel-compatible CSV report
+- `check_results.py` - Results summary utility
+
+### Hinglish Test Coverage
+
+The test suite covers **30 variations per workflow** with authentic Hinglish phrases:
+
+**Already Paid Examples:**
+- "Main ne pehle hi payment kar diya hai"
+- "Payment ho gaya hai last week" 
+- "Payement successfull ho gya"
+- "Amount deduct ho gaya hai"
+- "Transaction complete ho gaya"
+
+**Unable to Pay Examples:**
+- "Mere paas paise nahi hain"
+- "Job chali gayi hai"
+- "Financial problem hai"
+- "Salary nahi a rahi"
+- "Struggling kar raha hoon"
+
+**Dispute Examples:**
+- "Maine yeh loan liya hi nahi"
+- "Yeh galat hai"
+- "Fraud hai yeh"
+- "Mera account nahi hai"
+- "Kisi ne mere naam se liya hai"
+
+**Willing to Pay Examples:**
+- "Main pay kar sakta hoon"
+- "Installment chahiye"
+- "3 month plan mein kar sakta"
+- "Partial payment karunga"
+- "EMI option batao"
+
+**Callback Examples:**
+- "Baad mein call karna"
+- "Kal phone karna"
+- "Weekend mein time hai"
+- "Office mein call karna"
+- "Free time mein call karna"
+
+**Unknown/Clarification Examples:**
+- "Kya bol rahe ho?"
+- "Samajh nahi aaya"
+- "Kya matlab hai?"
+- "Thoda explain karo"
+- "Yeh kya hai?"
+
+### LangSmith Observability & Evaluation
 
 All agent runs are automatically logged to LangSmith, including:
-- Node-level execution
+- Node-level execution traces
 - Latency metrics
-- Token usage
+- Token usage statistics
 - Errors and exceptions
+- Conversation flow visualization
 
-### View Results
+**View Results:**
 - **Evaluation Dataset**: [View all 6 test scenarios and results](https://smith.langchain.com/o/c2bf1b47-4401-464a-8074-2a60bb18ef20/datasets)
 
-### Create Evaluation Dataset
+**Create Evaluation Dataset:**
 ```bash
 python scripts/create_langsmith_dataset.py
 ```
 
-### Run Evaluation
+**Run LangSmith Evaluation:**
 ```bash
 python -m experiments.langsmith_eval
 ```
@@ -207,9 +306,12 @@ python -m experiments.langsmith_eval
 This evaluates:
 - Verification correctness
 - Agent behavior across predefined test scenarios
+- Payment intent classification accuracy
+- Call outcome recording
 
 Results are viewable in:
 - LangSmith → Datasets → debt-collection-eval
+- LangSmith → Traces → Real-time conversation traces
 
 ## Test Scenarios Coverage
 
@@ -264,22 +366,24 @@ Experiments are versioned automatically (v3-required-cases-*) for comparison.
 
 ### Core Capabilities
 - **Secure DOB-based identity verification** (max 3 attempts, multiple format support)
-- **Natural language intent classification** using Azure OpenAI with rule-based fallback
+- **Natural language intent classification** using Azure OpenAI with enhanced Hinglish support
 - **Flexible negotiation** with multiple payment plans (EMI, partial, deferred)
 - **PTP (Promise to Pay) recording** with automatic reference number generation
 - **Dispute handling** with ticket creation and tracking
 - **Complete LangSmith tracing and evaluation**
 - **Proper state management** with awaiting_user flags
 - **Robust error handling** and graceful failures
-- **100% test scenario pass rate**
+- **100% test scenario pass rate** (180/180 Hinglish test cases)
+- **Hinglish language support** for authentic Indian customer interactions
 
 ### Robustness Features
 - **Comprehensive intent classification** - Handles 50+ variations of customer responses:
-  - Paid: "already paid", "payment done", "cleared", "settled", "transferred", etc.
-  - Disputed: "never took", "not mine", "fraud", "wrong person", "unauthorized", etc.
-  - Callback: "call later", "not available", "out of town", "busy now", etc.
-  - Unable: "lost job", "no money", "struggling", "financial difficulty", etc.
-  - Willing: "can't pay full", "installment", "payment plan", "will pay", etc.
+  - Paid: "already paid", "payment done", "cleared", "settled", "transferred", "payement successfull ho gya"
+  - Disputed: "never took", "not mine", "fraud", "wrong person", "unauthorized", "maine liya hi nahi"
+  - Callback: "call later", "not available", "out of town", "busy now", "baad mein call karna"
+  - Unable: "lost job", "no money", "struggling", "financial difficulty", "paise nahi hain", "job chali gayi"
+  - Willing: "can't pay full", "installment", "payment plan", "will pay", "installment mein pay kar sakta"
+  - **Hinglish phrases**: 30 variations per workflow with authentic Indian English/Hindi mix
 
 - **Flexible date extraction** - Supports multiple formats:
   - Natural: "5th January", "January 5th", "Jan 5th"
@@ -336,14 +440,17 @@ Experiments are versioned automatically (v3-required-cases-*) for comparison.
 
 **Solution**: Established feature-branch workflow and used `git checkout --ours` strategy to resolve conflicts by keeping the most recent working versions.
 
-### 5. Intent Classification Accuracy
-**Problem**: Customer responses with different wordings (e.g., "I can't pay full") were being misclassified as "disputed" instead of "willing".
+### 5. Intent Classification Accuracy & Hinglish Support
+**Problem**: Customer responses with different wordings (e.g., "I can't pay full") were being misclassified as "disputed" instead of "willing". Limited Hinglish language support for Indian customers.
 
 **Solution**: 
 - Expanded rule-based patterns to cover 50+ variations per intent category
+- **Added comprehensive Hinglish phrase support** with 30 variations per workflow
 - Improved Azure OpenAI prompt with clear examples and edge case guidance
 - Enhanced fallback logic to default to "willing" for payment-related responses
 - Added smart pattern matching for partial payment willingness
+- **Implemented authentic Indian English/Hindi mix phrases** like "payement successfull ho gya", "paise nahi hain", "job chali gayi"
+- **Achieved 100% test pass rate** (180/180 Hinglish test cases)
 
 ### 6. PTP Recording and Plan Detection
 **Problem**: Payment commitments weren't being properly recorded, and plan selection wasn't detected reliably.

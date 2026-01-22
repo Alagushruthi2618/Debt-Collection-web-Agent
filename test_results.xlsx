@@ -1,0 +1,8 @@
+Workflow,Total Tests,Passed,Failed,Pass Rate (%)
+already_paid,30,30,0,100.0
+dispute,30,30,0,100.0
+callback,30,30,0,100.0
+unable_to_pay,30,30,0,100.0
+willing,30,30,0,100.0
+unknown,30,30,0,100.0
+Overall,180,180,0,100.0

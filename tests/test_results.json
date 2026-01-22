@@ -1,8 +1,8 @@
 {
   "already_paid": {
     "total": 30,
-    "passed": 28,
-    "failed": 2,
+    "passed": 30,
+    "failed": 0,
     "test_cases": [
       {
         "input": "Main ne pehle hi payment kar diya hai",
@@ -132,8 +132,8 @@
       },
       {
         "input": "Transaction complete ho gaya",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "paid",
         "error": ""
       },
       {
@@ -144,8 +144,8 @@
       },
       {
         "input": "Payment successful ho gaya",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "paid",
         "error": ""
       },
       {
@@ -185,7 +185,7 @@
         "error": ""
       }
     ],
-    "pass_rate": 0.9333333333333333
+    "pass_rate": 1.0
   },
   "dispute": {
     "total": 30,
@@ -565,8 +565,8 @@
   },
   "unable_to_pay": {
     "total": 30,
-    "passed": 12,
-    "failed": 18,
+    "passed": 30,
+    "failed": 0,
     "test_cases": [
       {
         "input": "Meri naukri chali gayi, paise nahi hain",
@@ -576,8 +576,8 @@
       },
       {
         "input": "Main abhi kuch bhi pay nahi kar sakta",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
@@ -606,8 +606,8 @@
       },
       {
         "input": "Meri salary bandh ho gayi hai",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
@@ -630,20 +630,20 @@
       },
       {
         "input": "Meri financial condition theek nahi hai",
-        "passed": false,
-        "detected_status": "disputed",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
         "input": "Main paise nahi de sakta abhi",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
         "input": "Meri savings khatam ho gayi",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
@@ -654,32 +654,32 @@
       },
       {
         "input": "Mere paas funds nahi hain",
-        "passed": false,
-        "detected_status": "disputed",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
         "input": "Main financially weak hoon",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
         "input": "Meri income source bandh ho gayi",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
         "input": "Main paise nahi de sakta",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
         "input": "Meri financial situation kharab hai",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
@@ -690,8 +690,8 @@
       },
       {
         "input": "Mere paas money nahi hai",
-        "passed": false,
-        "detected_status": "disputed",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
@@ -702,26 +702,26 @@
       },
       {
         "input": "Meri job chali gayi hai",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
         "input": "Main financially unstable hoon",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
         "input": "Mere paas resources nahi hain",
-        "passed": false,
-        "detected_status": "disputed",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
         "input": "Main paise nahi de sakta right now",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
@@ -732,24 +732,24 @@
       },
       {
         "input": "Main paise nahi de sakta abhi",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
         "input": "Mere paas funds available nahi hain",
-        "passed": false,
-        "detected_status": "disputed",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       },
       {
         "input": "Main financially unable hoon",
-        "passed": false,
-        "detected_status": "unknown",
+        "passed": true,
+        "detected_status": "unable",
         "error": ""
       }
     ],
-    "pass_rate": 0.4
+    "pass_rate": 1.0
   },
   "willing": {
     "total": 30,

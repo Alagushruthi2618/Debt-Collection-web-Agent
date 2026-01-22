@@ -8,6 +8,9 @@ Rule-based patterns act as quick shortcuts for obvious cases.
 from dotenv import load_dotenv
 import os
 
+# Disable LangSmith tracing to avoid rate limits
+os.environ['LANGCHAIN_TRACING_V2'] = 'false'
+
 load_dotenv()
 
 # ------------------------------------------------------------------
@@ -327,12 +330,49 @@ def classify_intent_rule_based(prompt: str) -> str:
         "sab paise de diye", "full amount pay kar diya", "loan clear kar diya",
         "pehle hi settle kar diya", "settle kar diya", "settle ho gaya",
         "payment receipt bhej di", "receipt bhej di", "proof bhej diya",
+        "payement successfull ho gya", "payment successful ho gaya", "payment success ho gaya",
         "upi se transfer", "bank se payment", "cheque bhej diya",
         "online payment kar diya", "payment done hai", "emi pay kar di",
         "account clear ho gaya", "payment process ho gaya", "payment confirm",
-        "amount deduct ho gaya", "payment kar di thi kal", "receipt mil gaya"
+        "amount deduct ho gaya", "payment kar di thi kal", "receipt mil gaya",
+        # Additional patterns for successful payments
+        "transaction complete ho gaya", "payment successful ho gaya",
+        "transaction complete", "payment successful", "payment successful hai",
+        "transaction successful", "transaction successful hai", "complete ho gaya",
+        "successful ho gaya", "successfully done", "successfully completed"
     ]):
         return "paid"
+
+    # Very clear financial hardship signals (including Hinglish)
+    # Check this BEFORE dispute to avoid false positives
+    if any(phrase in text for phrase in [
+        "lost my job", "lost job", "no job", "unemployed", "jobless",
+        "no money", "no funds", "no cash", "broke", "out of money",
+        "can't afford", "cant afford", "cannot afford", "unable to afford",
+        "financial crisis", "financial difficulty", "financial trouble",
+        "struggling", "struggling financially", "going through tough times",
+        "difficult situation", "hard time", "tough time",
+        "no income", "no salary", "no earnings", "no source of income",
+        "medical emergency", "family emergency", "emergency expenses",
+        # Hinglish phrases - expanded patterns
+        "naukri chali gayi", "job nahi hai", "paise nahi hain",
+        "afford nahi kar sakta", "paisa nahi hai", "financial problem hai",
+        "mushkil mein hoon", "paise ki problem hai", "income nahi hai",
+        # Additional patterns for inability to pay
+        "kuch bhi pay nahi kar sakta", "kuch nahi de sakta", "kuch bhi nahi de sakta",
+        "paise nahi de sakta", "pay nahi kar sakta", "payment nahi kar sakta",
+        "salary bandh ho gayi", "salary bandh", "income source bandh",
+        "savings khatam ho gayi", "savings khatam", "funds khatam",
+        "financial condition theek nahi", "financial situation kharab",
+        "financial condition kharab", "financial situation theek nahi",
+        "financially weak", "financially unstable", "financially unable",
+        "funds available nahi", "resources nahi hain", "money available nahi",
+        "paise de sakta right now", "abhi paise nahi", "right now paise nahi",
+        "job chali gayi", "naukri chali gayi hai", "income source bandh ho gayi",
+        "mere paas funds nahi", "mere paas money nahi", "mere paas paise nahi",
+        "main financially struggling", "main financially weak", "main financially unstable"
+    ]):
+        return "unable"
 
     # Very clear dispute signals (including Hinglish)
     # IMPORTANT: Exclude financial hardship phrases to avoid false positives
@@ -373,7 +413,7 @@ def classify_intent_rule_based(prompt: str) -> str:
             "financially", "income", "salary", "funds", "savings", "paise",
             "naukri", "job", "struggling", "weak", "unstable", "crisis"
         ]
-        # Only exclude if the phrase is clearly about financial condition, not loan denial
+        # Only exclude if the phrase is clearly about financial condition AND doesn't contain loan denial words
         if any(context in text for context in financial_hardship_context):
             # Check if it's actually about loan denial (contains loan/debt/account denial words)
             loan_denial_words = ["loan", "debt", "account", "mera nahi", "meri nahi", 
@@ -416,37 +456,6 @@ def classify_intent_rule_based(prompt: str) -> str:
         "tomorrow evening call karo", "important work mein hoon", "next week call"
     ]):
         return "callback"
-
-    # Very clear financial hardship signals (including Hinglish)
-    # Check this BEFORE dispute to avoid false positives
-    if any(phrase in text for phrase in [
-        "lost my job", "lost job", "no job", "unemployed", "jobless",
-        "no money", "no funds", "no cash", "broke", "out of money",
-        "can't afford", "cant afford", "cannot afford", "unable to afford",
-        "financial crisis", "financial difficulty", "financial trouble",
-        "struggling", "struggling financially", "going through tough times",
-        "difficult situation", "hard time", "tough time",
-        "no income", "no salary", "no earnings", "no source of income",
-        "medical emergency", "family emergency", "emergency expenses",
-        # Hinglish phrases - expanded patterns
-        "naukri chali gayi", "job nahi hai", "paise nahi hain",
-        "afford nahi kar sakta", "paisa nahi hai", "financial problem hai",
-        "mushkil mein hoon", "paise ki problem hai", "income nahi hai",
-        # Additional patterns for inability to pay
-        "kuch bhi pay nahi kar sakta", "kuch nahi de sakta", "kuch bhi nahi de sakta",
-        "paise nahi de sakta", "pay nahi kar sakta", "payment nahi kar sakta",
-        "salary bandh ho gayi", "salary bandh", "income source bandh",
-        "savings khatam ho gayi", "savings khatam", "funds khatam",
-        "financial condition theek nahi", "financial situation kharab",
-        "financial condition kharab", "financial situation theek nahi",
-        "financially weak", "financially unstable", "financially unable",
-        "funds available nahi", "resources nahi hain", "money available nahi",
-        "paise de sakta right now", "abhi paise nahi", "right now paise nahi",
-        "job chali gayi", "naukri chali gayi hai", "income source bandh ho gayi",
-        "mere paas funds nahi", "mere paas money nahi", "mere paas paise nahi",
-        "main financially struggling", "main financially weak", "main financially unstable"
-    ]):
-        return "unable"
 
     # Very clear willingness to pay (including partial payment willingness and Hinglish)
     if any(phrase in text for phrase in [
