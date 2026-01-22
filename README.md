@@ -290,9 +290,6 @@ All agent runs are automatically logged to LangSmith, including:
 - Errors and exceptions
 - Conversation flow visualization
 
-**View Results:**
-- **Evaluation Dataset**: [View all 6 test scenarios and results](https://smith.langchain.com/o/c2bf1b47-4401-464a-8074-2a60bb18ef20/datasets)
-
 **Create Evaluation Dataset:**
 ```bash
 python scripts/create_langsmith_dataset.py
@@ -349,7 +346,6 @@ All 6 scenarios passing in LangSmith evaluation:
 
 **Note:** The system handles various wordings and phrasings for each scenario. See "Robustness Features" below.
 
-View detailed results: [LangSmith Dataset](https://smith.langchain.com/o/c2bf1b47-4401-464a-8074-2a60bb18ef20/datasets)
 
 ## Evaluation Logic
 
