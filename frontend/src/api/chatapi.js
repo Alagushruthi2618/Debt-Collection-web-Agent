@@ -1,4 +1,4 @@
-const BASE_URL = "https://debt-collection-web-agent-cvle.onrender.com";
+const BASE_URL = "https://debt-collection-web-agent-cvle.onrender.com/api";
 
 /**
  * Start a new chat session
