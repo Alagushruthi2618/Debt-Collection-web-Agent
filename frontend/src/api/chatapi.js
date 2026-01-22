@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8000/api";
+const BASE_URL = "https://debt-backend.onrender.com";
 
 /**
  * Start a new chat session
