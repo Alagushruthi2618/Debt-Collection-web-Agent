@@ -1,8 +1,9 @@
 const BASE_URL = "https://debt-collection-web-agent-cvle.onrender.com/api";
 
 /**
- * Start a new chat session
+ * Start a new chat session with phone number
  * @param {string} phone - User's phone number (required)
+ * @returns {Promise<Object>} Session data with session_id and initial messages
  */
 export async function startChat(phone) {
   if (!phone) {
@@ -21,9 +22,9 @@ export async function startChat(phone) {
       throw new Error(`Failed to start session: ${text}`);
     }
 
-    return res.json(); // returns { session_id, messages, ... }
+    return res.json();
   } catch (error) {
-    // Provide more detailed error messages
+    // Handle network errors
     if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
       throw new Error("Cannot connect to server. Please make sure the backend server is running on http://localhost:8000");
     }
@@ -32,9 +33,10 @@ export async function startChat(phone) {
 }
 
 /**
- * Send a user message to the backend and get updated state
+ * Send user message and get agent response
  * @param {string} sessionId - Current chat session ID
  * @param {string} userInput - User's message
+ * @returns {Promise<Object>} Updated conversation state
  */
 export async function sendChatMessage(sessionId, userInput) {
   if (!sessionId) throw new Error("Session ID is required");
@@ -52,9 +54,9 @@ export async function sendChatMessage(sessionId, userInput) {
       throw new Error(`Failed to send message: ${text}`);
     }
 
-    return res.json(); // returns updated state
+    return res.json();
   } catch (error) {
-    // Provide more detailed error messages
+    // Handle network errors
     if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
       throw new Error("Cannot connect to server. Please make sure the backend server is running on http://localhost:8000");
     }
@@ -67,6 +69,7 @@ export async function sendChatMessage(sessionId, userInput) {
  * @param {string} sessionId - Current chat session ID
  * @param {number} rating - Rating from 1 to 5
  * @param {string} feedback - Optional feedback text
+ * @returns {Promise<Object>} Feedback submission result
  */
 export async function submitFeedback(sessionId, rating, feedback = "") {
   if (!sessionId) throw new Error("Session ID is required");
@@ -92,7 +95,7 @@ export async function submitFeedback(sessionId, rating, feedback = "") {
 
     return res.json();
   } catch (error) {
-    // Provide more detailed error messages
+    // Handle network errors
     if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
       throw new Error("Cannot connect to server. Please make sure the backend server is running on http://localhost:8000");
     }

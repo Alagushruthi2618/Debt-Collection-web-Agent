@@ -12,19 +12,19 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Add project root to Python path to allow imports
+# Add project root to Python path for imports
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# Check for required environment variables
+# Validate required environment variables
 if not os.getenv("AZURE_OPENAI_API_KEY"):
     print("[WARNING] AZURE_OPENAI_API_KEY not set. The server will start but API calls may fail.")
     print("Please create a .env file in the project root with: AZURE_OPENAI_API_KEY=your_api_key_here")
 
-# Try to import routes with error handling
+# Import routes with error handling
 try:
     from backend.routes import chat
     print("[OK] Successfully imported chat routes")
@@ -32,7 +32,7 @@ except Exception as e:
     import traceback
     print(f"[ERROR] Failed to import chat routes: {e}")
     traceback.print_exc()
-    # Create a dummy router to prevent server crash
+    # Create dummy router to prevent server crash
     from fastapi import APIRouter
     chat = type('obj', (object,), {'router': APIRouter()})
 
@@ -51,7 +51,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register routes
+# Register API routes
 try:
     app.include_router(chat.router, prefix="/api", tags=["chat"])
     print("[OK] Successfully registered chat routes")

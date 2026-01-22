@@ -7,17 +7,16 @@ from ..data import save_call_record, save_dispute, save_ptp
 def closing_node(state: CallState) -> dict:
     """
     End the call professionally and record outcome.
-    Handles different outcomes appropriately.
+    Handles different payment statuses with appropriate closing messages.
     """
-
-    # Get the final payment status (Azure OpenAI-classified)
+    # Get payment status from state
     payment_status = state.get("payment_status", "completed")
     
     print(f"[CLOSING] Closing node called. payment_status={payment_status}, is_complete={state.get('is_complete')}, stage={state.get('stage')}")
     
-    # Generate appropriate closing message based on outcome
+    # Generate closing message based on payment status
     if payment_status == "paid":
-        # Check if screenshot has been uploaded by looking for screenshot upload messages
+        # Check if payment proof screenshot has been uploaded
         messages = state.get("messages", [])
         has_screenshot = any(
             msg.get("content", "").startswith("[Screenshot uploaded:") 
@@ -28,7 +27,7 @@ def closing_node(state: CallState) -> dict:
         print(f"[CLOSING] Messages count: {len(messages)}")
         
         if not has_screenshot:
-            # Ask for proof and wait for upload
+            # Request payment proof before closing
             closing_message = (
                 "Aapke payment confirm karne ke liye dhanyawad. "
                 "Jaldi verify aur process karne ke liye, kripya payment ka proof attachment ke roop mein upload karein "
@@ -61,10 +60,10 @@ def closing_node(state: CallState) -> dict:
             outcome = "paid"
         
     elif payment_status == "disputed":
-        # Save dispute record - get reason from messages if last_user_input is cleared
+        # Extract dispute reason from user messages
         dispute_reason = state.get("last_user_input")
         if not dispute_reason:
-            # Find the user message that triggered the dispute (usually after disclosure)
+            # Find the user message that triggered the dispute
             messages = state.get("messages", [])
             for msg in reversed(messages):
                 if msg.get("role") == "user":
@@ -73,6 +72,7 @@ def closing_node(state: CallState) -> dict:
         if not dispute_reason:
             dispute_reason = "Customer disputes the debt"
         
+        # Save dispute ticket
         dispute_id = save_dispute(state["customer_id"], dispute_reason)
         
         closing_message = (
@@ -104,7 +104,7 @@ def closing_node(state: CallState) -> dict:
     elif payment_status == "willing":
         # Check if PTP was already recorded in negotiation node
         if state.get("ptp_id"):
-            # PTP already saved in negotiation node
+            # PTP already saved - show confirmation with reference number
             ptp_id = state.get("ptp_id")
             ptp_amount = state.get("ptp_amount")
             ptp_date = state.get("ptp_date")
@@ -118,7 +118,7 @@ def closing_node(state: CallState) -> dict:
             )
             outcome = "ptp_recorded"
         else:
-            # Customer discussed payment but no specific commitment yet
+            # Customer willing but no specific commitment yet
             closing_message = (
                 "Aaj hamare saath is matter par discuss karne ke liye dhanyawad. "
                 "Hamari conversation ke basis par, hum jaldi hi aapke saath follow-up karke payment arrangement finalize karenge. "
@@ -136,7 +136,7 @@ def closing_node(state: CallState) -> dict:
         )
         outcome = payment_status or "completed"
 
-    # Create call summary
+    # Create call summary for records
     summary = f"""
 Call completed.
 Verified: {state['is_verified']}
@@ -146,7 +146,7 @@ Customer: {state['customer_name']}
 Outstanding Amount: ₹{state['outstanding_amount']}
 """
 
-    # Save call record
+    # Persist call record
     save_call_record({
         "customer_id": state["customer_id"],
         "outcome": outcome,

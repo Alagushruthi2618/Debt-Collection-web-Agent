@@ -20,27 +20,27 @@ def should_continue(state: CallState) -> str:
     is_complete = state.get("is_complete")
     awaiting_user = state.get("awaiting_user")
     
-    # If call is complete, end
+    # End conversation if already complete
     if is_complete:
         return END
     
-    # If awaiting user input, pause (return END to wait for user)
+    # Pause execution when waiting for user input
     if awaiting_user:
         return END
     
-    # Route based on stage
+    # Route to appropriate node based on current stage
     if stage == "init":
         return "greeting"
     
     elif stage == "greeting":
-        # After greeting, move to verification
+        # Move to verification after greeting
         return "verification"
     
     elif stage == "verification":
-        # Check verification status
+        # Proceed to disclosure if verified
         if state.get("is_verified"):
             return "disclosure"
-        # If not verified but attempts exhausted, should be complete
+        # End call if verification attempts exhausted
         if state.get("verification_attempts", 0) >= 4:
             return "closing"
         return "verification"
@@ -49,28 +49,29 @@ def should_continue(state: CallState) -> str:
         return "disclosure"
     
     elif stage == "disclosure":
-        # After disclosure, check payment intent
+        # Check payment intent after disclosure
         return "payment_check"
     
     elif stage == "payment_check":
         payment_status = state.get("payment_status")
-        # If payment_status is None, we haven't processed the input yet - route back to payment_check
+        # Wait for payment classification if not yet processed
         if payment_status is None:
             return "payment_check"
+        # Route to negotiation if customer is willing to pay
         if payment_status == "willing":
             return "negotiation"
-        # For other statuses (paid, disputed, callback, unable, unknown), go to closing
+        # Close for other statuses (paid, disputed, callback, unable, unknown)
         return "closing"
     
     elif stage == "negotiation":
         messages = state.get("messages", [])
-        # Check if PTP was recorded (indicates negotiation complete)
+        # Check if PTP was recorded (negotiation complete)
         if state.get("ptp_id"):
             return "closing"
         
+        # Detect closing signals in conversation
         if messages:
             last_msg = messages[-1]
-            # If last message contains closing phrases, go to closing
             if last_msg.get("role") == "assistant":
                 content = last_msg.get("content", "").lower()
                 closing_phrases = [
@@ -82,25 +83,25 @@ def should_continue(state: CallState) -> str:
                 if any(phrase in content for phrase in closing_phrases):
                     return "closing"
         
-        # Otherwise stay in negotiation
+        # Continue negotiation
         return "negotiation"
     
     elif stage == "closing":
-        # If closing but not complete (e.g., waiting for screenshot), continue to closing node
-        # Otherwise end the conversation
+        # Continue closing if waiting for screenshot/confirmation
         if not state.get("is_complete", False):
             return "closing"
         return END
     
-    # Default: end (safety fallback)
+    # Safety fallback for unknown stages
     print(f"[WARNING] Unknown stage '{stage}', ending conversation")
     return END
 
 
 def create_graph():
+    """Create and configure the LangGraph state machine."""
     graph = StateGraph(CallState)
 
-    # Register nodes
+    # Register all conversation nodes
     graph.add_node("greeting", greeting_node)
     graph.add_node("verification", verification_node)
     graph.add_node("disclosure", disclosure_node)
@@ -108,7 +109,7 @@ def create_graph():
     graph.add_node("negotiation", negotiation_node)
     graph.add_node("closing", closing_node)
 
-    # Set conditional edges from each node
+    # Set entry point with conditional routing
     graph.set_conditional_entry_point(
         should_continue,
         {
@@ -122,7 +123,7 @@ def create_graph():
         }
     )
     
-    # Each node routes through the same conditional logic
+    # All nodes use the same conditional routing logic
     for node_name in ["greeting", "verification", "disclosure", "payment_check", "negotiation", "closing"]:
         graph.add_conditional_edges(
             node_name,

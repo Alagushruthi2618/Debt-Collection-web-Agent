@@ -6,7 +6,8 @@ In production, this would come from CRM APIs.
 """
 
 
-# Customer database (keyed by phone number)
+# Mock customer database (keyed by phone number)
+# In production, this would be fetched from CRM/API
 CUSTOMERS = {
     "+919876543210": {
         "id": "CUST001",
@@ -29,7 +30,8 @@ CUSTOMERS = {
 }
 
 
-# Loan database (keyed by customer ID)
+# Mock loan database (keyed by customer ID)
+# In production, this would be fetched from loan management system
 LOANS = {
     "CUST001": {
         "id": "LN001",
@@ -86,10 +88,10 @@ def get_customer_with_loan(phone: str) -> dict | None:
     return {"customer": customer, "loan": loan}
 
 # In-memory storage for call outcomes
-# (In production, this would be saved to database)
-CALL_RECORDS = []
-PTP_RECORDS = []
-DISPUTE_RECORDS = []
+# In production, these would be persisted to a database
+CALL_RECORDS = []  # All call summaries
+PTP_RECORDS = []  # Promise-to-pay records
+DISPUTE_RECORDS = []  # Dispute tickets
 
 
 

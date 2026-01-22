@@ -11,10 +11,9 @@ import predixionLogo from "./assets/predixion-logo.png";
 
 import "./styles/design-system.css";
 
-// Force cache refresh
-console.log('App loaded at:', new Date().toISOString());
-
+// Main App component for debt collection agent chat interface
 function App() {
+  // State management
   const [phone, setPhone] = useState("");
   const [sessionId, setSessionId] = useState(null);
   const [callState, setCallState] = useState(null);
@@ -26,20 +25,21 @@ function App() {
   const [payNowClicked, setPayNowClicked] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Auto-scroll to bottom when messages change
+  // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [callState?.messages]);
 
-  // Reset error when starting new chat
+  // Clear errors when starting new chat
   useEffect(() => {
     if (started) {
       setError(null);
     }
   }, [started]);
 
+  // Initialize chat session with phone number
   async function initChat() {
     if (!phone.trim()) {
       setError("Please enter a valid phone number");
@@ -48,19 +48,19 @@ function App() {
     
     setLoading(true);
     setError(null);
-    setIsTyping(true); // Show typing indicator while initializing
+    setIsTyping(true);
     
     try {
-      // Add a small delay to make the initial greeting feel natural
+      // Start chat session
       const data = await startChat(phone.trim());
       
-      // Add delay before showing the greeting (1-2 seconds)
+      // Add delay for natural feel (1-2 seconds)
       const delay = 1000 + Math.random() * 1000;
       await new Promise(resolve => setTimeout(resolve, delay));
       
       setIsTyping(false);
       setSessionId(data.session_id);
-      // Ensure all required fields are present with safe defaults
+      // Initialize state with safe defaults
       const initialState = {
         messages: data.messages || [],
         stage: data.stage || "init",
@@ -94,52 +94,41 @@ function App() {
     handleSend("Mujhe payment options dikhayein");
   }
 
+  // Send user message and get agent response
   async function handleSend(input) {
-    // Prevent sending if not awaiting user or if conversation is complete
+    // Validate state before sending
     if (!callState?.awaiting_user || callState?.is_complete) {
       return;
     }
 
-    // Prevent sending empty messages
+    // Prevent empty messages
     if (!input || !input.trim()) {
       return;
     }
 
-    // Prevent sending if already loading
+    // Prevent duplicate sends
     if (loading) {
       return;
     }
 
     setLoading(true);
     setError(null);
-    
-    // Show typing indicator immediately
     setIsTyping(true);
     
-    // Add a minimum delay to make it feel natural (1-2 seconds)
-    const minDelay = 1000 + Math.random() * 1000; // 1-2 seconds
+    // Minimum delay for natural feel (1-2 seconds)
+    const minDelay = 1000 + Math.random() * 1000;
     
     try {
       const startTime = Date.now();
       const data = await sendChatMessage(sessionId, input.trim());
       const elapsedTime = Date.now() - startTime;
       
-      console.log("[DEBUG] Received response:", {
-        is_verified: data.is_verified,
-        customer_name: data.customer_name,
-        outstanding_amount: data.outstanding_amount,
-        days_past_due: data.days_past_due,
-        loan_id: data.loan_id,
-        stage: data.stage
-      });
-      
-      // If response came too fast, add delay to make it feel natural
+      // Add delay if response was too fast
       if (elapsedTime < minDelay) {
         await new Promise(resolve => setTimeout(resolve, minDelay - elapsedTime));
       }
       
-      // Update state with response (this will trigger the typing animation)
-      // Preserve existing state values if new ones aren't provided
+      // Update state with response, preserving existing values
       setCallState(prevState => {
         try {
           const updatedState = {
@@ -208,28 +197,24 @@ function App() {
     setPayNowClicked(false); // Reset Pay Now clicked state
   }
 
-  // Check if screenshot button should be shown (when payment is disputed or customer says they paid)
+  // Determine if screenshot upload button should be shown
   function shouldShowScreenshotButton() {
     if (!callState?.messages) return false;
     
     const paymentStatus = callState.payment_status;
     
-    // Show if payment is disputed (even after completion)
+    // Show for disputed payments
     if (paymentStatus === "disputed") {
-      console.log("[DEBUG] Showing screenshot button: payment_status is disputed");
       return true;
     }
     
-    // Show if payment status is "paid" (even after completion)
+    // Show for paid status
     if (paymentStatus === "paid") {
-      console.log("[DEBUG] Showing screenshot button: payment_status is paid");
       return true;
     }
     
-    // Show if customer mentioned they paid (check all user messages, not just recent)
-    // This should work even after completion
+    // Show if customer mentioned payment in messages
     const userMessages = callState.messages.filter(msg => msg.role === "user");
-    
     const hasPaidMention = userMessages.some(msg => {
       const content = msg.content?.toLowerCase() || "";
       return content.includes("paid") || 
@@ -239,16 +224,10 @@ function App() {
              content.includes("payment done");
     });
     
-    // Show screenshot button if customer says they paid (regardless of completion status)
-    if (hasPaidMention) {
-      console.log("[DEBUG] Showing screenshot button: user mentioned payment", { paymentStatus, hasPaidMention });
-      return true;
-    }
-    
-    console.log("[DEBUG] NOT showing screenshot button", { paymentStatus, messagesCount: callState.messages?.length });
-    return false;
+    return hasPaidMention;
   }
 
+  // Handle screenshot upload for payment proof
   async function handleScreenshotUpload(file) {
     if (!file || !sessionId) return;
     
@@ -256,6 +235,7 @@ function App() {
     setError(null);
     
     try {
+      // Prepare form data for upload
       const formData = new FormData();
       formData.append('screenshot', file);
       formData.append('session_id', sessionId);
@@ -271,7 +251,7 @@ function App() {
       
       const data = await response.json();
       
-      // Update state with the response (includes updated messages and state)
+      // Update state with response
       if (data.messages && data.stage !== undefined) {
         setCallState({
           ...callState,

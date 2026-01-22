@@ -5,26 +5,25 @@ from ..state import CallState
 
 def greeting_node(state: CallState) -> dict:
     """
-    Initial greeting.
-    Handles user response - if "no" or similar, show message; if "yes", proceed silently.
+    Initial greeting node.
+    Asks customer to confirm identity. Handles negative responses by ending call.
     """
-
-    # Guardrail: Validate state structure
+    # Validate state structure
     if not isinstance(state, dict):
         raise ValueError("Invalid state: state must be a dictionary")
     
-    # Guardrail: Validate required fields
+    # Validate required fields
     if "customer_name" not in state or not state.get("customer_name"):
         raise ValueError("Invalid state: customer_name is required")
     
-    # Guardrail: Sanitize customer name
+    # Sanitize customer name
     customer_name = str(state["customer_name"]).strip()
     if not customer_name:
         raise ValueError("Invalid state: customer_name cannot be empty")
     
     first_name = customer_name.split()[0]
     
-    # If not yet greeted, ask the question
+    # Send greeting if not already sent
     if not state.get("has_greeted"):
         message = (
             f"Namaste {first_name}! 👋 "
@@ -43,10 +42,10 @@ def greeting_node(state: CallState) -> dict:
             "last_user_input": None,
         }
     
-    # Already greeted - check user response
+    # Process user's response to greeting
     user_input = state.get("last_user_input", "").strip().lower() if state.get("last_user_input") else ""
     
-    # Check for negative responses (including Hinglish)
+    # Detect negative responses (including Hinglish)
     negative_responses = [
         "no", "nope", "not me", "wrong person", "that's not me", "that is not me",
         "i'm not", "i am not", "incorrect", "wrong", "no i'm not", "no i am not",
@@ -59,7 +58,7 @@ def greeting_node(state: CallState) -> dict:
     is_negative = any(neg in user_input for neg in negative_responses)
     
     if is_negative:
-        # User said no - show message and end call
+        # End call if customer denies identity
         error_message = (
             "Mujhe maaf kijiye, lagta hai hum galat number par call kar rahe hain. "
             "Agar aapko lagta hai ki yeh galat hai, toh kripya hamare support team se contact karein. "

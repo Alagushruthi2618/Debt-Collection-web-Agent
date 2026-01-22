@@ -4,7 +4,7 @@ import StaticHeader from "./staticheader";
 import TypingIndicator from "./typingindicator";
 import predixionLogo from "../assets/predixion-logo.png";
 
-
+// Main chat window component displaying conversation
 function ChatWindow({ 
   messages, 
   isComplete, 
@@ -23,18 +23,15 @@ function ChatWindow({
   const scrollContainerRef = useRef(null);
   const [fullyTypedMessageIndex, setFullyTypedMessageIndex] = useState(-1);
 
-  // Track when a new assistant message arrives
+  // Track typing animation progress
   useEffect(() => {
-    const assistantMessages = messages.filter(m => m.role === "assistant");
     const lastAssistantIndex = messages.findLastIndex(m => m.role === "assistant");
-    
-    // If we have a new assistant message that hasn't been typed yet
     if (lastAssistantIndex >= 0 && lastAssistantIndex > fullyTypedMessageIndex) {
-      // Don't auto-update - let the typing animation complete first
+      // Wait for typing animation to complete
     }
   }, [messages, fullyTypedMessageIndex]);
 
-  // Auto-scroll to bottom when messages change or typing indicator appears
+  // Auto-scroll to bottom on new messages
   useEffect(() => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
@@ -94,15 +91,14 @@ function ChatWindow({
         ) : (
           <>
             {messages.map((m, i) => {
-              // Generate timestamp for each message
+              // Generate timestamp for message
               const timestamp = m.timestamp || new Date().toLocaleTimeString('en-US', { 
                 hour: '2-digit', 
                 minute: '2-digit',
                 hour12: true 
               });
               
-              // Only show typing effect for assistant messages that haven't been fully typed yet
-              // The last assistant message that's newer than our tracked index should type out
+              // Show typing animation for new assistant messages
               const isAssistantMessage = m.role === "assistant";
               const shouldShowTyping = isAssistantMessage && i > fullyTypedMessageIndex;
               
@@ -115,7 +111,7 @@ function ChatWindow({
                   onOptionClick={onOptionClick}
                   isTyping={shouldShowTyping}
                   onTypingComplete={() => {
-                    // Mark this message as fully typed
+                    // Track completed typing animation
                     if (i > fullyTypedMessageIndex) {
                       setFullyTypedMessageIndex(i);
                     }
@@ -123,11 +119,11 @@ function ChatWindow({
                 />
               );
             })}
-            {/* Show typing indicator while waiting for response */}
+            {/* Show typing indicator while waiting for agent response */}
             {isTyping && (
               <TypingIndicator />
             )}
-            {/* Invisible element at the end for scrolling */}
+            {/* Scroll anchor */}
             <div ref={messagesEndRef} />
           </>
         )}

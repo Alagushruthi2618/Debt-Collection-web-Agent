@@ -1,10 +1,12 @@
 # main.py
+# CLI interface for testing the debt collection agent
 
 from src.state import create_initial_state
 from src.graph import app
 
 
 def main():
+    """Main entry point for CLI-based agent testing."""
     print("=== Debt Collection Agent Test ===")
     print("Available test customers:")
     print("  1. +919876543210 (Rajesh Kumar, DOB: 15-03-1985)")
@@ -21,18 +23,18 @@ def main():
 
     print("\n--- Starting Call ---\n")
 
-    # Conversation loop
+    # Main conversation loop - continues until call is complete
     iteration = 0
     while not state.get("is_complete"):
         iteration += 1
         
-        # Safety check
+        # Prevent infinite loops
         if iteration > 50:
             print("\nMax iterations reached - ending call")
             break
             
         try:
-            # Debug info
+            # Log current state for debugging
             stage = state.get('stage')
             awaiting = state.get('awaiting_user')
             verified = state.get('is_verified')
@@ -40,35 +42,35 @@ def main():
             
             print(f"[DEBUG] Before invoke - Stage: {stage}, Awaiting: {awaiting}, Payment: {payment_status}")
             
-            # Invoke the graph
+            # Process current state through LangGraph
             state = app.invoke(state, config={"recursion_limit": 25})
             
-            # Debug after invoke
             print(f"[DEBUG] After invoke - Stage: {state.get('stage')}, Awaiting: {state.get('awaiting_user')}, Payment: {state.get('payment_status')}")
             
-            # Print the last agent message if it exists
+            # Display agent's response
             messages = state.get("messages", [])
             if messages and messages[-1]["role"] == "assistant":
                 print(f"Agent: {messages[-1]['content']}\n")
             
-            # Check if call is complete
+            # Exit if conversation completed
             if state.get("is_complete"):
                 break
             
-            # If the agent is waiting for user input, get it
+            # Get user input when agent is waiting
             if state.get("awaiting_user"):
                 user_input = input("You: ").strip()
                 
-                # Allow empty input but warn user
+                # Handle empty input
                 if user_input == "":
                     print("(Please provide a response)\n")
                     continue
                 
+                # Allow user to exit
                 if user_input.lower() in ["quit", "exit"]:
                     print("\nCall ended by user.")
                     break
                 
-                # Add user message to state
+                # Update state with user input
                 state["messages"].append({
                     "role": "user",
                     "content": user_input
@@ -76,14 +78,14 @@ def main():
                 state["last_user_input"] = user_input
                 state["awaiting_user"] = False
             else:
-                # If not awaiting and not complete, check stage
+                # Validate state consistency
                 current_stage = state.get("stage")
                 
-                # If we're in a stage that should be awaiting but isn't, there might be an issue
+                # Warn if stage should be awaiting input but isn't
                 if current_stage in ["greeting", "verification", "disclosure", "negotiation"]:
                     print(f"\n[WARNING] Stage '{current_stage}' should be awaiting user input")
                 
-                # If we're not awaiting and not complete, something went wrong
+                # Safety check for unexpected states
                 if not state.get("awaiting_user") and not state.get("is_complete"):
                     print(f"\n[DEBUG] Unexpected state - ending call")
                     break
