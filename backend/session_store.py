@@ -2,7 +2,8 @@
 
 """
 Session management for web-based agent.
-Stores session_id → CallState mapping.
+Stores session_id → CallState mapping in memory.
+In production, use Redis or a database.
 """
 
 from typing import Optional
@@ -10,7 +11,7 @@ import uuid
 from src.state import CallState, create_initial_state
 
 
-# In-memory session store
+# In-memory session store (key: session_id, value: CallState)
 # In production, this would be Redis or a database
 _sessions: dict[str, CallState] = {}
 
@@ -22,6 +23,7 @@ def create_session(phone: str) -> tuple[str, Optional[CallState]]:
     """
     session_id = str(uuid.uuid4())
     
+    # Initialize state from customer data
     state = create_initial_state(phone)
     if not state:
         return session_id, None

@@ -1,8 +1,8 @@
 """
-LLM utilities with improved Azure OpenAI-based intent classification.
+LLM utilities for intent classification and response generation.
 
-Azure OpenAI is used as the PRIMARY classifier for better accuracy.
-Rule-based patterns act as quick shortcuts for obvious cases.
+Uses Azure OpenAI as primary classifier with rule-based fallback.
+Supports Hinglish (Hindi-English mix) for Indian customers.
 """
 
 from dotenv import load_dotenv
@@ -24,7 +24,7 @@ AZURE_OPENAI_MODEL = os.getenv("AZURE_OPENAI_MODEL", "gpt-4.1-mini")
 AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
 AZURE_OPENAI_API_VERSION = os.getenv("AZURE_OPENAI_API_VERSION", "2024-12-01-preview")
 
-# These MUST correspond to existing nodes / flows
+# Valid payment intent classifications
 ALLOWED_INTENTS = [
     "paid",
     "disputed",
@@ -42,7 +42,8 @@ _client_cache = None
 
 def get_azure_openai_client():
     """
-    Lazily initialize and cache Azure OpenAI client.
+    Initialize and cache Azure OpenAI client (singleton pattern).
+    Tests connection on first call.
     """
     global _client_cache
     
@@ -67,7 +68,7 @@ def get_azure_openai_client():
             azure_endpoint=AZURE_OPENAI_ENDPOINT
         )
         
-        # Test it with a simple generation
+        # Test connection with simple request
         test_response = client.chat.completions.create(
             model=AZURE_OPENAI_DEPLOYMENT,
             messages=[{"role": "user", "content": "Say 'ok'"}],
@@ -565,20 +566,21 @@ def classify_intent_rule_based(prompt: str) -> str:
 
 def classify_intent(prompt: str) -> str:
     """
-    Unified intent classifier.
+    Unified intent classifier with hybrid approach.
     
     Strategy:
     1. Try fast rule-based classification for obvious cases
-    2. If uncertain (unknown), use Azure OpenAI for intelligent classification
-    3. Always guarantee a valid intent is returned
+    2. If uncertain, use Azure OpenAI for intelligent classification
+    3. Always return a valid intent
     """
-    
+    # Try rule-based first (fast)
     rule_intent = classify_intent_rule_based(prompt)
     
     if rule_intent in ALLOWED_INTENTS:
         print(f"[INTENT] Rule-based: {rule_intent}")
         return rule_intent
     
+    # Fall back to LLM for complex cases
     print(f"[INTENT] Using Azure OpenAI for: '{prompt[:50]}...'")
     azure_intent = classify_intent_with_azure_openai(prompt)
     print(f"[INTENT] Azure OpenAI classified as: {azure_intent}")
@@ -592,14 +594,13 @@ def classify_intent(prompt: str) -> str:
 
 def generate_negotiation_response(context: str) -> str:
     """
-    Generate intelligent, conversational responses for negotiation.
-    Uses a safer prompt structure to avoid safety filters.
+    Generate conversational negotiation responses using Azure OpenAI.
+    Returns None if generation fails (triggers template fallback).
     """
-    
     try:
         client = get_azure_openai_client()
         
-        # Simplified, safer prompt structure
+        # Simplified prompt to avoid safety filters
         safe_prompt = f"""{context}
 
 Respond professionally in 2-3 sentences."""
@@ -613,6 +614,7 @@ Respond professionally in 2-3 sentences."""
         
         text, was_blocked = safe_get_response_text(response)
         
+        # Validate response quality
         if was_blocked or not text or len(text.strip()) < 20:
             print("Warning: Azure OpenAI response blocked or incomplete, using template")
             raise Exception("Blocked or incomplete response")
@@ -621,14 +623,13 @@ Respond professionally in 2-3 sentences."""
         
     except Exception as e:
         print(f"Error generating negotiation response: {e}")
-        # Return None to signal fallback needed
         return None
 
 
 def generate_payment_plans(outstanding_amount: float, customer_name: str) -> list:
     """
     Generate 2-3 payment plan options using Azure OpenAI.
-    Falls back to rule-based plans if Azure OpenAI fails.
+    Falls back to rule-based plans if generation fails.
     """
     
     try:
@@ -686,25 +687,25 @@ Generate plans:"""
 def generate_fallback_plans(amount: float) -> list:
     """
     Generate fallback payment plans using rule-based logic.
+    Creates 2-3 standard plans based on amount.
     """
-    
     plans = []
     
-    # Plan 1: Full payment with discount (Hinglish)
+    # Plan 1: Full payment with 5% discount
     discount = int(amount * 0.05)
     plans.append({
         "name": "Immediate Settlement",
         "description": f"7 din ke andar ₹{amount - discount:,.0f} (5% discount) full payment"
     })
     
-    # Plan 2: 3-month installment (Hinglish)
+    # Plan 2: 3-month installment
     monthly_3 = int(amount / 3)
     plans.append({
         "name": "3-Month EMI Plan",
         "description": f"3 mahine tak ₹{monthly_3:,.0f} per month"
     })
     
-    # Plan 3: 6-month installment (if amount is large enough) (Hinglish)
+    # Plan 3: 6-month (large amounts) or 2-month (smaller amounts)
     if amount > 30000:
         monthly_6 = int(amount / 6)
         plans.append({

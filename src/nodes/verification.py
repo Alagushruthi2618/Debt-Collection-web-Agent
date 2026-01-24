@@ -5,16 +5,14 @@ from ..state import CallState
 
 def verification_node(state: CallState) -> dict:
     """
-    Verify customer identity using phone number.
-    Phone number verification already happened during session initialization,
-    so we automatically mark the user as verified.
+    Verify customer identity.
+    Phone verification happens at session init, so we mark as verified automatically.
     """
-
-    # Guardrail: Validate state structure
+    # Validate state structure
     if not isinstance(state, dict):
         raise ValueError("Invalid state: state must be a dictionary")
     
-    # Guardrail: Ensure required fields exist
+    # Validate required fields
     if "customer_phone" not in state:
         raise ValueError("Invalid state: customer_phone is required")
     
@@ -25,17 +23,15 @@ def verification_node(state: CallState) -> dict:
             "awaiting_user": False,
         }
 
-    # Guardrail: Validate phone number exists and is not empty
+    # Validate phone number
     phone = state.get("customer_phone", "").strip()
     if not phone:
         raise ValueError("Invalid state: customer_phone cannot be empty")
     
-    # Phone number verification already happened at session initialization
-    # If we reach here, the phone number was validated and customer exists
-    # So we can automatically verify the user (silently, no message)
+    # Phone verification done at session init - auto-verify here
     return {
         "is_verified": True,
-        "verification_attempts": 1,  # Track that verification occurred
+        "verification_attempts": 1,
         "stage": "verified",
         "awaiting_user": False,
         "last_user_input": None,

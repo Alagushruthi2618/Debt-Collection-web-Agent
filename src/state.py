@@ -33,53 +33,54 @@ PaymentStatus = Literal[
 # Call State
 # =========================
 class CallState(TypedDict):
+    """Complete state for a debt collection call conversation."""
     # === Conversation ===
-    messages: List[dict]
-    stage: Stage
-    turn_count: int
-    last_user_input: Optional[str]
-    awaiting_user: bool
-    has_greeted: bool
-    has_disclosed: bool  
+    messages: List[dict]  # Conversation history
+    stage: Stage  # Current conversation stage
+    turn_count: int  # Number of conversation turns
+    last_user_input: Optional[str]  # Most recent user message
+    awaiting_user: bool  # Whether agent is waiting for user input
+    has_greeted: bool  # Whether greeting has been sent
+    has_disclosed: bool  # Whether legal disclosure has been provided
     
     # === Customer Info ===
-    customer_id: str
-    customer_name: str
-    customer_phone: str
-    customer_dob: str
+    customer_id: str  # Unique customer identifier
+    customer_name: str  # Customer's name
+    customer_phone: str  # Customer's phone number
+    customer_dob: str  # Customer's date of birth (for verification)
     
     # === Loan Info ===
-    loan_id: str
-    loan_type: str
-    outstanding_amount: float
-    days_past_due: int
+    loan_id: str  # Loan identifier
+    loan_type: str  # Type of loan (e.g., "Personal Loan")
+    outstanding_amount: float  # Amount owed
+    days_past_due: int  # Days overdue
     
     # === Verification ===
-    verification_attempts: int
-    is_verified: bool
+    verification_attempts: int  # Number of verification attempts
+    is_verified: bool  # Whether customer identity is verified
     
     # === Payment Handling ===
-    payment_status: Optional[PaymentStatus]
+    payment_status: Optional[PaymentStatus]  # Customer's payment intent
     
     # === Promise To Pay ===
-    ptp_amount: Optional[float]
-    ptp_date: Optional[str]
-    ptp_id: Optional[str]
+    ptp_amount: Optional[float]  # Committed payment amount
+    ptp_date: Optional[str]  # Committed payment date
+    ptp_id: Optional[str]  # PTP reference number
     
     # === Dispute ===
-    dispute_reason: Optional[str]
-    dispute_id: Optional[str]
+    dispute_reason: Optional[str]  # Reason for dispute
+    dispute_id: Optional[str]  # Dispute ticket ID
     
     # === Negotiation ===
-    offered_plans: List[dict]
-    selected_plan: Optional[dict]
+    offered_plans: List[dict]  # Payment plans offered to customer
+    selected_plan: Optional[dict]  # Plan selected by customer
     
     # === Call Outcome ===
-    call_outcome: Optional[str]
-    call_summary: Optional[str]
+    call_outcome: Optional[str]  # Final call result
+    call_summary: Optional[str]  # Summary of the call
     
     # === Flags ===
-    is_complete: bool
+    is_complete: bool  # Whether conversation is finished
 
 
 # =========================

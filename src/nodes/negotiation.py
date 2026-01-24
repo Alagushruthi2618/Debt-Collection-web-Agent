@@ -8,11 +8,11 @@ import re
 
 
 def extract_amount(text: str) -> float:
-    """Extract monetary amount from text."""
-    # Remove commas and normalize currency symbols
+    """Extract monetary amount from text using pattern matching."""
+    # Normalize currency symbols and separators
     text = text.replace(',', '').replace('₹', '').replace('Rs', '').replace('rs', '')
     
-    # Try to find amounts with currency context (₹, Rs, rupees, etc.)
+    # Match various currency formats
     amount_patterns = [
         r'₹\s*(\d+(?:\.\d+)?)',  # ₹45000
         r'rs\.?\s*(\d+(?:\.\d+)?)',  # Rs 45000 or Rs. 45000
@@ -24,14 +24,14 @@ def extract_amount(text: str) -> float:
     for pattern in amount_patterns:
         matches = re.findall(pattern, text, re.IGNORECASE)
         for match in matches:
-            # Handle comma-separated numbers
             amount_str = str(match).replace(',', '')
             try:
                 amount = float(amount_str)
-                # Filter out years (4-digit numbers between 1900-2020 are likely years, not amounts)
+                # Filter out years (likely not payment amounts)
                 if 1900 <= amount <= 2020:
-                    continue  # This is likely a year, not an amount
-                if amount > 100:  # Reasonable minimum for debt payment
+                    continue
+                # Minimum reasonable payment amount
+                if amount > 100:
                     return amount
             except ValueError:
                 continue
@@ -40,9 +40,10 @@ def extract_amount(text: str) -> float:
 
 
 def extract_date(text: str) -> str:
-    """Extract date from text in various formats."""
+    """Extract date from text, supporting multiple formats (natural language, numeric, relative)."""
     text_lower = text.lower()
     
+    # Month name mapping
     months_map = {
         'jan': '01', 'january': '01',
         'feb': '02', 'february': '02',
@@ -58,10 +59,9 @@ def extract_date(text: str) -> str:
         'dec': '12', 'december': '12',
     }
     
-    # Try to find month name first
+    # Try natural language dates (e.g., "5th January")
     for month_name, month_num in months_map.items():
         if month_name in text_lower:
-            # Pattern: "5th January", "5 January", "January 5th", "January 5", "Jan 5th"
             day_match = re.search(r'(\d{1,2})(?:st|nd|rd|th)?\s*' + month_name, text_lower)
             if not day_match:
                 day_match = re.search(month_name + r'\s*(\d{1,2})(?:st|nd|rd|th)?', text_lower)
@@ -73,8 +73,7 @@ def extract_date(text: str) -> str:
                     year = year_match.group(0) if year_match else "2025"
                     return f"{day.zfill(2)}-{month_num}-{year}"
     
-    # Try DD-MM-YYYY or DD/MM/YYYY format (with or without year)
-    # Match dates with full year (4 digits) - this includes DOB dates
+    # Try numeric formats (DD-MM-YYYY or DD/MM/YYYY)
     date_pattern_full = r'(\d{1,2})[-/\s](\d{1,2})[-/\s](\d{4})'
     match_full = re.search(date_pattern_full, text)
     if match_full:
@@ -82,20 +81,20 @@ def extract_date(text: str) -> str:
         year_int = int(year)
         # Filter out DOB dates (years before 2020 are likely DOB, not commitment dates)
         if year_int < 2020:
-            return None  # This is a DOB, not a commitment date
+            return None
         if 1 <= int(day) <= 31 and 1 <= int(month) <= 12:
             return f"{day.zfill(2)}-{month.zfill(2)}-{year}"
     
-    # Try DD-MM-YYYY or DD/MM/YYYY format without year (defaults to 2025)
+    # Try date without year (defaults to 2025)
     date_pattern = r'(\d{1,2})[-/\s](\d{1,2})(?![-/\s]?\d{4})'
     match = re.search(date_pattern, text)
     if match:
         day, month = match.groups()
         if 1 <= int(day) <= 31 and 1 <= int(month) <= 12:
-            year = "2025"  # Default to current/future year
+            year = "2025"
             return f"{day.zfill(2)}-{month.zfill(2)}-{year}"
     
-    # Try relative dates: "tomorrow", "next week", "next month", "15th", etc.
+    # Try relative dates ("tomorrow", "next week", etc.)
     today = datetime.now()
     
     if "tomorrow" in text_lower:
@@ -114,7 +113,7 @@ def extract_date(text: str) -> str:
             next_month = today.replace(month=today.month + 1)
         return next_month.strftime("%d-%m-%Y")
     
-    # Try standalone day numbers (e.g., "15th", "15")
+    # Try standalone day numbers (e.g., "15th")
     day_only_match = re.search(r'\b(\d{1,2})(?:st|nd|rd|th)?\b', text_lower)
     if day_only_match and not any(month in text_lower for month in months_map.keys()):
         day = int(day_only_match.group(1))
@@ -135,7 +134,7 @@ def extract_date(text: str) -> str:
 def has_commitment_details(state: CallState, last_user_input: str) -> tuple:
     """
     Check if customer has provided both amount and date commitment.
-    Returns (has_both, amount, date, plan_selected)
+    Returns (has_both, amount, date, plan_selected).
     """
     messages = state.get("messages", [])
     offered_plans = state.get("offered_plans", [])
@@ -144,7 +143,7 @@ def has_commitment_details(state: CallState, last_user_input: str) -> tuple:
     committed_date = None
     selected_plan = None
     
-    # Find where verification ended
+    # Find where verification ended (to focus on negotiation messages)
     verification_done_index = -1
     for i, msg in enumerate(messages):
         if msg.get("role") == "assistant":
@@ -152,7 +151,7 @@ def has_commitment_details(state: CallState, last_user_input: str) -> tuple:
             if "thank you for confirming" in content or "outstanding payment" in content:
                 verification_done_index = i
     
-    # Find where plans were offered
+    # Find where payment plans were offered
     plan_offer_index = -1
     for i, msg in enumerate(messages):
         if msg.get("role") == "assistant" and i > verification_done_index:
@@ -160,6 +159,7 @@ def has_commitment_details(state: CallState, last_user_input: str) -> tuple:
                 plan_offer_index = i
                 break
     
+    # Focus on messages after plans were offered
     start_index = max(plan_offer_index, verification_done_index + 1) if plan_offer_index >= 0 else verification_done_index + 1
     relevant_messages = messages[start_index:] if start_index >= 0 else messages[-3:]
     
@@ -317,19 +317,18 @@ def has_commitment_details(state: CallState, last_user_input: str) -> tuple:
 
 def negotiation_node(state: CallState) -> dict:
     """
-    Have an intelligent conversation with the customer about payment.
-    Detects when customer commits to amount AND date, then moves to closing.
+    Negotiate payment with customer.
+    Detects when customer commits to both amount and date, then saves PTP and closes.
     """
-
-    # Guardrail: Validate state structure
+    # Validate state structure
     if not isinstance(state, dict):
         raise ValueError("Invalid state: state must be a dictionary")
     
-    # Guardrail: Validate verification status
+    # Ensure customer is verified
     if not state.get("is_verified"):
         raise ValueError("Invalid state: User must be verified before negotiation")
     
-    # Guardrail: Validate required fields
+    # Validate required fields
     if "outstanding_amount" not in state:
         raise ValueError("Invalid state: outstanding_amount is required")
     
@@ -339,12 +338,12 @@ def negotiation_node(state: CallState) -> dict:
     if "customer_id" not in state:
         raise ValueError("Invalid state: customer_id is required")
     
-    # Guardrail: Validate outstanding amount
+    # Validate outstanding amount
     amount = state["outstanding_amount"]
     if not isinstance(amount, (int, float)) or amount < 0:
         raise ValueError("Invalid state: outstanding_amount must be a non-negative number")
     
-    # Guardrail: Sanitize customer name
+    # Extract first name for personalization
     customer_name = str(state["customer_name"]).strip()
     if not customer_name:
         raise ValueError("Invalid state: customer_name cannot be empty")
@@ -367,23 +366,24 @@ def negotiation_node(state: CallState) -> dict:
     
     print(f"[NEGOTIATION] Turn {negotiation_turns + 1}, User input: '{last_user_input}'")
     
+    # Check if customer has committed to both amount and date
     commitment_result = has_commitment_details(state, last_user_input)
     has_both, committed_amount, committed_date, selected_plan = commitment_result
     
-    # If we have both - CLOSE IMMEDIATELY
+    # Save PTP and close if full commitment received
     if has_both:
         print(f"[NEGOTIATION] OK: Full commitment received - CLOSING NOW")
         
-        # Guardrail: Validate commitment data before saving
+        # Validate commitment data
         if not committed_amount or committed_amount <= 0:
             raise ValueError("Invalid commitment: amount must be positive")
         
         if not committed_date:
             raise ValueError("Invalid commitment: date is required")
         
-        # Save PTP record
+        # Save Promise-to-Pay record
         plan_name = selected_plan['name'] if selected_plan else "Custom Payment Plan"
-        plan_type = plan_name  # Use plan name as plan_type
+        plan_type = plan_name
         ptp_id = save_ptp(
             customer_id=state["customer_id"],
             amount=committed_amount,

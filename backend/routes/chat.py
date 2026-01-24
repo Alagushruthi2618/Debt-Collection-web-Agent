@@ -58,7 +58,8 @@ class ChatResponse(BaseModel):
 
 def sanitize_user_input(user_input: str) -> str:
     """
-    Sanitize user input to prevent injection attacks and ensure safe processing.
+    Sanitize user input to prevent attacks and ensure safe processing.
+    Validates length and content.
     """
     if not user_input:
         return ""
@@ -66,7 +67,7 @@ def sanitize_user_input(user_input: str) -> str:
     # Strip whitespace
     sanitized = user_input.strip()
     
-    # Guardrail: Check maximum length (prevent DoS)
+    # Prevent DoS attacks with length limit
     MAX_INPUT_LENGTH = 5000
     if len(sanitized) > MAX_INPUT_LENGTH:
         raise HTTPException(
@@ -74,7 +75,7 @@ def sanitize_user_input(user_input: str) -> str:
             detail=f"Message is too long. Maximum length is {MAX_INPUT_LENGTH} characters."
         )
     
-    # Guardrail: Check minimum length (prevent empty/spam)
+    # Prevent empty/spam messages
     if len(sanitized) == 0:
         raise HTTPException(
             status_code=400,
@@ -90,14 +91,12 @@ async def chat(request: ChatRequest):
     Handle user chat input.
     
     Flow:
-    1. Get or create session
+    1. Validate session and input
     2. Add user message to state
-    3. Update state with user input
-    4. Invoke LangGraph
-    5. Return response
+    3. Invoke LangGraph to process
+    4. Return updated state
     """
-    
-    # Guardrail: Validate request object
+    # Validate request
     if not request:
         raise HTTPException(
             status_code=400,
@@ -106,14 +105,14 @@ async def chat(request: ChatRequest):
     
     session_id = request.session_id
     
-    # Guardrail: Validate session_id
+    # Validate session ID
     if not session_id or not isinstance(session_id, str):
         raise HTTPException(
             status_code=400,
             detail="Session ID is required. Please start a new chat."
         )
     
-    # Guardrail: Validate session_id format (UUID-like)
+    # Validate session ID format
     if len(session_id) < 10 or len(session_id) > 100:
         raise HTTPException(
             status_code=400,
@@ -126,28 +125,28 @@ async def chat(request: ChatRequest):
     # Get session state
     state = get_session(session_id)
     
-    # Guardrail: Session existence check
+    # Validate session exists
     if not state:
         raise HTTPException(
             status_code=404, 
             detail="Session not found. Your session may have expired. Please start a new chat."
         )
     
-    # Guardrail: Validate state structure
+    # Validate state structure
     if not isinstance(state, dict):
         raise HTTPException(
             status_code=500,
             detail="Invalid session state. Please start a new chat."
         )
     
-    # Guardrail: Check if call is already complete
+    # Check if conversation already complete
     if state.get("is_complete"):
         raise HTTPException(
             status_code=400,
             detail="This conversation has already ended. Please start a new chat to continue."
         )
     
-    # Guardrail: Validate required state fields
+    # Validate required state fields
     if "messages" not in state:
         raise HTTPException(
             status_code=500,
@@ -160,32 +159,29 @@ async def chat(request: ChatRequest):
             detail="Invalid session state: missing stage. Please start a new chat."
         )
     
-    # Guardrail: Check if agent is awaiting user input
+    # Warn if agent not awaiting input (but allow it)
     if not state.get("awaiting_user"):
-        # This might happen if frontend sends input when agent isn't ready
-        # We'll allow it but log a warning for debugging
         print(f"[WARNING] Received input when not awaiting user. Stage: {state.get('stage')}")
     
-    # Add user message to state
+    # Add user message to conversation
     state["messages"].append({
         "role": "user",
         "content": user_input
     })
     
-    # Update state with user input (nodes read from last_user_input)
+    # Update state for graph processing
     state["last_user_input"] = user_input
     state["awaiting_user"] = False
     
     try:
-        # Check if graph is available
+        # Validate graph is available
         if graph_app is None:
             raise HTTPException(
                 status_code=500,
                 detail="Server configuration error: Graph not initialized. Please check server logs."
             )
         
-        # Invoke LangGraph agent
-        # The graph will process the input and update state
+        # Process through LangGraph
         config = {"recursion_limit": 25}
         updated_state = graph_app.invoke(state, config)
         
@@ -282,31 +278,30 @@ def validate_phone_number(phone: str) -> str:
             detail="Phone number is required. Please enter a valid phone number."
         )
     
-    # Sanitize: remove whitespace and common separators
+    # Remove whitespace and separators
     phone = phone.strip().replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
     
-    # Guardrail: Check minimum length
+    # Validate length
     if len(phone) < 10:
         raise HTTPException(
             status_code=400,
             detail="Please enter a valid phone number (at least 10 digits)."
         )
     
-    # Guardrail: Check maximum length (reasonable limit)
     if len(phone) > 20:
         raise HTTPException(
             status_code=400,
             detail="Phone number is too long. Please enter a valid phone number."
         )
     
-    # Guardrail: Check for valid characters (digits and + only)
+    # Validate characters (digits and + only)
     if not phone.replace("+", "").replace(" ", "").isdigit():
         raise HTTPException(
             status_code=400,
             detail="Phone number contains invalid characters. Please use only digits and +."
         )
     
-    # Guardrail: Ensure + is only at the start if present
+    # Validate + position (must be at start)
     if "+" in phone and not phone.startswith("+"):
         raise HTTPException(
             status_code=400,
@@ -320,9 +315,9 @@ def validate_phone_number(phone: str) -> str:
 async def init_session(request: InitRequest):
     """
     Initialize a new session for a phone number.
-    Returns session_id and initial state.
+    Returns session_id and initial state with greeting.
     """
-    # Guardrail: Validate request object
+    # Validate request
     if not request or not hasattr(request, 'phone'):
         raise HTTPException(
             status_code=400,
@@ -332,6 +327,7 @@ async def init_session(request: InitRequest):
     # Validate and sanitize phone number
     phone = validate_phone_number(request.phone)
     
+    # Create session from customer data
     session_id, state = create_session(phone)
     
     if not state:
@@ -340,9 +336,9 @@ async def init_session(request: InitRequest):
             detail=f"Customer with phone number {phone} not found. Please use a valid test phone number (e.g., +919876543210, +919876543211, +919876543212)."
         )
     
-    # Invoke graph to get initial greeting
+    # Get initial greeting from graph
     try:
-        # Check if graph is available
+        # Validate graph is available
         if graph_app is None:
             raise HTTPException(
                 status_code=500,
@@ -413,18 +409,14 @@ async def upload_screenshot(
     screenshot: UploadFile = File(...)
 ):
     """
-    Handle screenshot upload for payment disputes.
-    Saves the screenshot and adds a note to the session.
+    Handle screenshot upload for payment proof.
+    Saves the file and updates session state.
     """
-    
     if not session_id:
         raise HTTPException(
             status_code=400,
             detail="Session ID is required"
         )
-    
-    # Accept any file type for now (as per user requirement)
-    # File type validation can be added later if needed
     
     # Get session state
     state = get_session(session_id)
@@ -434,23 +426,23 @@ async def upload_screenshot(
             detail="Session not found"
         )
     
-    # Create uploads directory if it doesn't exist
+    # Create uploads directory if needed
     uploads_dir = Path(project_root) / "uploads" / "screenshots"
     uploads_dir.mkdir(parents=True, exist_ok=True)
     
-    # Generate unique filename
+    # Generate unique filename with timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     file_extension = screenshot.filename.split('.')[-1] if '.' in screenshot.filename else 'png'
     filename = f"{session_id}_{timestamp}.{file_extension}"
     file_path = uploads_dir / filename
     
     try:
-        # Save the file
+        # Save uploaded file
         with open(file_path, "wb") as f:
             content = await screenshot.read()
             f.write(content)
         
-        # Add message to state about screenshot upload
+        # Add upload message to conversation
         screenshot_message = {
             "role": "user",
             "content": f"[Screenshot uploaded: {screenshot.filename}]"
@@ -460,8 +452,7 @@ async def upload_screenshot(
             state["messages"] = []
         state["messages"].append(screenshot_message)
         
-        # If payment_status is "paid" and we're in closing stage, trigger graph to complete
-        # This will generate the final closing message
+        # Trigger graph to complete if payment proof uploaded
         if state.get("payment_status") == "paid" and state.get("stage") == "closing":
             print(f"[UPLOAD] Payment status is 'paid' and stage is 'closing' - triggering graph")
             try:
